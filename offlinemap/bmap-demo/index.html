@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+    <meta content="initial-scale=1.0, user-scalable=no" name="viewport"/>
+    <link href="./css/index.css" rel="stylesheet">
+
+<!--    <script src="./js/convertor.js"></script>-->
+    <!-- 百度地图3.0 离线API Begin -->
+    <script src="../bmap-offline/map3.0_init.js" type="text/javascript"></script>
+    <script src="../bmap-offline/map3.0.js" type="text/javascript"></script>
+    <!-- 百度地图3.0 End -->
+    <script src="./js/jquery.js" type="text/javascript"></script>
+    <script src="./layer.js" type="text/javascript"></script>
+    <!--    字体-->
+    <link href="./font/iconfont.css" rel="stylesheet">
+    <title>离线地图</title>
+</head>
+<body>
+<div id="allmap"></div>
+<div class="menu">
+    <ul>
+        <li class="menuone">
+            <span class="iconfont iconlocation close"></span>
+            <i class="Location">北京市</i>
+
+            <span class="iconfont iconunfold close"></span>
+        </li>
+
+        <li onclick="openDraw(4)">
+            <span class="iconfont iconselect close"></span>
+            圈选
+        </li>
+        <!-- <li onclick="openDraw(5)"> -->
+        <li>
+            <span class="iconfont iconfence close"></span>
+            电子围栏
+            <span class="iconfont iconunfold close"></span>
+        </li>
+        <li>
+            <span class="iconfont icontool close"></span>
+            工具
+            <span class="iconfont iconunfold close"></span>
+        </li>
+    </ul>
+</div>
+
+<div>
+    当前绘制完成的覆盖物列表：
+    <ul id="drawlist">
+    </ul>
+</div>
+<!-- 定位弹出层 -->
+<div class="tc">
+    <div class="CompanySearch">
+        <div>
+            <input id="suggestId" placeholder="输入搜索关键字" size="20" type="text" />
+            <div id="searchResultPanel"></div>
+        </div>
+        <div class="search" onclick="search(1)">
+            <span class="iconfont iconseach close"></span>
+        </div>
+    </div>
+    <!-- <div id="r-result"></div> -->
+    <div class='positioning'>
+        <h1>当前位置：</h1>
+        <i class="Location">北京市</i>
+    </div>
+</div>
+<!-- 电子围栏弹出层 -->
+<div class="Enclosure">
+    <ul>
+        <li onclick="openDraw(5)">创建</li>
+        <li onclick="Administration()">管理</li>
+    </ul>
+</div>
+<!-- 工具弹出层 -->
+<div class="Tool">
+    <ul>
+        <li onclick="openDrawtwo(5)">绘制区域</li>
+        <li onclick="Regional_management()">区域管理</li>
+        <li onclick="myDis.open()">测距</li>
+    </ul>
+</div>
+<!-- 保存区域信息弹窗 -->
+<div class="Save_area">
+    <div class="Save_area_header">
+        <h1>
+            区域
+        </h1>
+        <h2>
+            <span class="iconfont">&#xe64a;</span>
+        </h2>
+    </div>
+    <div class="Save_area_body">
+        <div>
+            <p><i>*</i>名称：</p>
+            <div>
+                <input class="infoinput" type="text" placeholder="请输入标注名称" autofocus="autofocus"/>
+            </div>
+        </div>
+
+    </div>
+    <div class="Save_area_footer">
+        <button>取消</button>
+        <button>确定</button>
+    </div>
+</div>
+
+
+</body>
+</html>
+<script src="./js/index.js"></script>
+<script src="./js/demo.js" type="text/javascript"></script>
+
+<!--图形计算工具-->
+<script type="text/javascript" src="baiduMapAPI/GeoUtils_min.js"></script>
+
+<!--加载鼠标绘制工具-->
+<script type="text/javascript" src="baiduMapAPI/DrawingManager_min.js"></script>
+<link rel="stylesheet" href="baiduMapAPI/DrawingManager_min.css" />
+
+<!--鼠标绘制操作实例-->
+<script src="js/drawAction.js" type="text/javascript"></script>
+
+<!--加载鼠标测距-->
+<script type="text/javascript" src="baiduMapAPI/DistanceTool_min.js"></script>
+<script>
+    var myDis = new BMapLib.DistanceTool(map);    //  鼠标测距功能
+</script>
+<!--用于电子围栏越界判断实例-->
+<script type="text/javascript" src="js/geoAction.js"></script>
+
+<script type="text/javascript" src="baiduMapAPI/GeoUtils_min.js"></script>
+<script src="js/demoAction.js" type="text/javascript"></script>
+
+
+
