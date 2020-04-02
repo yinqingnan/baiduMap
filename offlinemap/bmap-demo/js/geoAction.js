@@ -63,19 +63,3 @@ var createEntity = (function () {
         newPolygon: createPolygon
     }
 });
-
-//示例
-// var pts = [];
-// var pt1 = new BMap.Point(116.395, 39.910);
-// var pt2 = new BMap.Point(116.405, 39.920);
-// var pt3 = new BMap.Point(116.410, 39.920);
-// pts.push(pt1);
-// pts.push(pt2);
-// pts.push(pt3);
-// var ply = new BMap.Polyline(pts);
-// var ply = new BMap.Polygon(pts);
-// var ply = new BMap.Polygon(pts);   
-// map.clearOverlays();
-// var mkr = new BMap.Marker(pt);
-// map.addOverlay(mkr);
-// map.addOverlay(ply);

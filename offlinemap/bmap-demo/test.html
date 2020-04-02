@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<style type="text/css">
+body, html{width: 100%;height: 100%;overflow: hidden;margin:0;}
+#allmap {margin-right: 300px;height: 100%;overflow: hidden;}
+#result {border-left:1px dotted #999;height:100%;width:295px;position:absolute;top:0px;right:0px;font-size:12px;}
+dl,dt,dd,ul,li{
+    margin:0;
+    padding:0;
+    list-style:none;
+}
+p{font-size:12px;}
+dt{
+    font-size:14px;
+    font-family:"微软雅黑";
+    font-weight:bold;
+    border-bottom:1px dotted #000;
+    padding:5px 0 5px 5px;
+    margin:5px 0;
+}
+dd{
+    padding:5px 0 0 5px;
+}
+li{
+    line-height:28px;
+}
+button{
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 20px;
+}
+</style>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=PlhFWpA02aoURjAOpnWcRGqw7AI8EEyO"></script>
+
+
+<!--加载鼠标绘制工具-->
+<script type="text/javascript" src="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.js"></script>
+<!--加载鼠标绘制工具-->
+<link rel="stylesheet" href="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.css" />
+<!-- 判断点是否在圆内或矩形内 -->
+<script type="text/javascript" src="http://api.map.baidu.com/library/GeoUtils/1.2/src/GeoUtils_min.js"></script>
+
+<title>鼠标绘制工具</title>
+</head>
+<body>
+<div id="allmap" style="overflow:hidden;zoom:1;position:relative;width: 100%;">	
+    <div id="map" style="height:100%;-webkit-transition: all 0.5s ease-in-out;transition: all 0.5s ease-in-out;width: 100%;"></div>
+    <button onclick="draw(BMAP_DRAWING_CIRCLE)">sssssssssssssssss</button>
+</div>
+ 
+
+<script type="text/javascript"> 
+// 初始化百度地图
+var map = new BMap.Map('map');
+map.centerAndZoom(new BMap.Point(116.3875773621, 39.9156402091), 6);	//初始化地图,设置中心点坐标和地图级别
+map.enableScrollWheelZoom();	//开启鼠标滚轮缩放
+ 
+//被定位在地图中的6个点
+var sosmarker = [
+		new BMap.Point(106.553141, 29.555666),
+		new BMap.Point(106.511111, 29.555555),
+		new BMap.Point(106.512322, 29.555555),
+		new BMap.Point(106.511111, 29.555555),
+		new BMap.Point(106.522222, 29.555555),
+		new BMap.Point(106.233333, 29.555555)
+	];
+				 
+//将6个点定位在地图中
+sosmarker.forEach(function(value) {  
+	var sosmarker;
+	sosmarker = new BMap.Marker(value);
+ 
+	map.addOverlay(sosmarker);		//将标注添加到地图中
+	
+	sosmarker.disableMassClear();	//设置marker不可被清除
+	
+	sosmarker.addEventListener("click",function (e) {
+		openDataInfo(value, e);
+	});  
+});
+ 
+//鼠标滑过marker事件
+function openDataInfo(result, e) {
+	var carOpts = {
+			width : 200,     // 信息窗口宽度
+			height: 120,     // 信息窗口高度
+			title : "<b>设备信息</b>" , // 信息窗口标题
+			enableMessage:true	//设置允许信息窗发送短息
+		};
+	
+	var p = e.target;
+	
+	var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+	
+	carContent = '<br/><table><thead>'+
+		'<tr><th><label>快速操作：</label><a οnclick="showOrderTrackDiv()"><span style="color:#478FCA; margin-left:15px;">轨迹回放</span></a></th></tr></thead><tbody>'+
+		'<tr><td>经度：'+p.getPosition().lng+'</td></tr><tr><td>纬度：'+p.getPosition().lat+'</td></tr>'+
+		'</tbody></table></div>';
+	
+	var infoWindow = new BMap.InfoWindow(carContent, carOpts); // 创建信息窗口对象   
+	map.openInfoWindow(infoWindow, point); //开启信息窗口  
+}
+ 
+
+   var styleOptions = {
+        strokeColor:"blue",    //边线颜色。
+        fillColor:"blue",      //填充颜色。当参数为空时，圆形将没有填充效果。
+        strokeWeight: 3,       //边线的宽度，以像素为单位。
+        strokeOpacity: 0.8,	   //边线透明度，取值范围0 - 1。
+        fillOpacity: 0.2,      //填充的透明度，取值范围0 - 1。
+        strokeStyle: 'solid' //边线的样式，solid或dashed。
+    }
+ 
+//实例化鼠标绘制工具
+var myDrawingManagerObject = new BMapLib.DrawingManager(map, {
+	isOpen: false, //是否开启绘制模式
+	enableDrawingTool: false, //是否显示工具栏
+	drawingToolOptions: {
+		anchor: BMAP_ANCHOR_TOP_RIGHT, //位置
+		offset: new BMap.Size(5, 5), //偏离值
+	},
+	circleOptions: styleOptions, //圆的样式
+	polylineOptions: styleOptions, //线的样式
+	polygonOptions: styleOptions, //多边形的样式
+	rectangleOptions: styleOptions //矩形的样式
+});
+ 	function draw(type){
+		myDrawingManagerObject.open(); 
+		myDrawingManagerObject.setDrawingMode(type);
+	}
+ //添加鼠标绘制工具监听事件，用于获取绘制结果
+myDrawingManagerObject.addEventListener('overlaycomplete', overlaycomplete);
+function overlaycomplete(e){
+	
+	var cirCount = 0;
+	var polyCount = 0;
+	
+	myDrawingManagerObject.close();		//关闭画图
+	
+	var drawingModeType = e.drawingMode;	//获取所画图形类型
+	
+	sosmarker.forEach(function(value) {
+		console.log(value)
+		if (drawingModeType == "circle") {
+			//圆
+			if(BMapLib.GeoUtils.isPointInCircle(value, e.overlay)) {  
+				cirCount++;
+			}  
+		} else if (drawingModeType == "rectangle" || drawingModeType == "polygon") {
+			//矩形  或  多边形
+			if(BMapLib.GeoUtils.isPointInPolygon(value, e.overlay)) {
+				polyCount++;
+			}
+		}
+	});
+	
+	alert("圆中包含"+cirCount+"个定位点，多边形或矩形中包含"+polyCount+"个定位点。");
+				
+	map.removeOverlay(e.overlay);	//画完后清除所画对象
+}
+
+</script>
+ <script>
+	// var overlays = [];
+	// var overlaycomplete = function(e){
+    //     overlays.push(e.overlay); 
+    // };
+    // var styleOptions = {
+    //     strokeColor:"blue",    //边线颜色。
+    //     fillColor:"blue",      //填充颜色。当参数为空时，圆形将没有填充效果。
+    //     strokeWeight: 3,       //边线的宽度，以像素为单位。
+    //     strokeOpacity: 0.8,	   //边线透明度，取值范围0 - 1。
+    //     fillOpacity: 0.2,      //填充的透明度，取值范围0 - 1。
+    //     strokeStyle: 'solid' //边线的样式，solid或dashed。
+    // }
+    // //实例化鼠标绘制工具
+    // var drawingManager = new BMapLib.DrawingManager(map, {
+    //     isOpen: false, //是否开启绘制模式
+    //     //enableDrawingTool: true, //是否显示工具栏
+    //     drawingToolOptions: {
+    //         anchor: BMAP_ANCHOR_TOP_RIGHT, //位置
+    //         offset: new BMap.Size(5, 5), //偏离值
+    //     },
+    //     circleOptions: styleOptions, //圆的样式
+    //     polylineOptions: styleOptions, //线的样式
+    //     polygonOptions: styleOptions, //多边形的样式
+    //     rectangleOptions: styleOptions //矩形的样式
+    // });  
+	
+	//  //添加鼠标绘制工具监听事件，用于获取绘制结果
+    // drawingManager.addEventListener('overlaycomplete', overlaycomplete);
+	// function draw(type){
+	// 	drawingManager.open(); 
+	// 	drawingManager.setDrawingMode(type);
+	// }
+ </script>
+</body>
+</html>
+</script>

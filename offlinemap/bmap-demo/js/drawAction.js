@@ -170,11 +170,11 @@ var publicDrawingManager = new drawingManagerEntity();
 publicDrawingManager.createDraw();
 publicDrawingManager.openCalculate();
 //绘制完成后事件(必须放在绑定监听事件之前)
+var allOverlay=[];
 var overlaycomplete = function (e,num) {
     var cache1 = e.overlay;
     //存放绘制物
     var whitchOver = publicDrawingManager.storeOverlay(cache1);            //当值为3 则为圆形，当值为4 则为多边形
-    // console.log(whitchOver)
 
     if (whitchOver == 3) {
         var circleRadius = publicDrawingManager.getLastOverlay(3).getRadius(); //半径
@@ -182,11 +182,13 @@ var overlaycomplete = function (e,num) {
         var circleLng = circlePositon.lng;
         var circleLat = circlePositon.lat;
         viewDraw(3, circleRadius, circleLng, circleLat);
+        
+        allOverlay = map.getOverlays();
+        
         return;
     } else if (whitchOver == 4) {
         var polygon1 = publicDrawingManager.getLastOverlay(4);         //绘制出的多边形元素
         var polygonArray = polygon1.getPath();         //将绘制多边形经纬度坐标进行保存并传输到浏览器
-        //  console.log(polygon1)
         viewDraw(4, polygonArray.length);
         //  console.log(polygonArray)
         var Str = JSON.stringify(polygonArray)
@@ -209,7 +211,7 @@ function clearAll() {
     }
 };
 
-
+//
 function openDraw(num) {
     publicDrawingManager.openDraw(num);
 }
@@ -232,12 +234,13 @@ function viewDraw(isoverlays, positons, circleLng, circleLat) {
         span2.appendChild(document.createTextNode(",圆中心点：" + circleLng + "," + circleLat));
         li.appendChild(span1);
         li.appendChild(span2);
-    } else {
-        var span1 = document.createElement('span');
-        span1.appendChild(document.createTextNode("多边形点：" + positons));
-        li.appendChild(span1);
+    } 
+    // else {
+    //     var span1 = document.createElement('span');
+    //     span1.appendChild(document.createTextNode("多边形点：" + positons));
+    //     li.appendChild(span1);
 
-    }
+    // }
     fragment1.appendChild(li);
     //将内存中的元素添加到网页中
     var drawList = document.getElementById("drawlist");
@@ -245,4 +248,4 @@ function viewDraw(isoverlays, positons, circleLng, circleLat) {
 };
 
 
-
+ 

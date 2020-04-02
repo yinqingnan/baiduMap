@@ -1,3 +1,11 @@
+
+  if( typeof map != 'undefined' ){
+    map.addEventListener("zoomend", function(e){
+      layer.msg('地图级别: '+map.getZoom() + (map.getZoom() > 14?', 示例中只有15级地图,超过的无法显示!':''), {'offset':'b'});
+    });
+  }
+
+
 // 百度地图API功能
 // 定义默认的精度，维度
 var strLongitude = "106.53063501";
@@ -34,7 +42,7 @@ function clearAll() {
 
 
 
-// //地图加载完时关闭预加载模态框
+//地图加载完时关闭预加载模态框
 map.addEventListener("tilesloaded", function () {
     $(".module").hide()
 
@@ -45,7 +53,25 @@ $(".close")[0].onclick = () => {
     $(".module").hide()
 }
 
+//地图加载完时关闭预加载模态框
+map.addEventListener("tilesloaded", function () {
+    $(".module").hide()
 
+    $.ajax({
+        url: 'http://api.map.baidu.com/geocoder/v2/?ak=Ya2nSaqjT3vNrIgba1v4nfWzSxGdtgZD&location=' + strLatitude + ',' + strLongitude + '&output=json',
+        dataType: 'jsonp',
+        callback: 'BMap._rd._cbk43398',
+        success: function (res) {
+            var Locationinner = res.result.addressComponent.city
+            $(".Location")[0].innerHTML = Locationinner
+            $(".Location")[1].innerHTML = Locationinner
+        },
+        error: function () {
+
+        }
+    });
+
+})
 
 
 
@@ -137,13 +163,6 @@ function stopPropagation(e) {
     }
 }
 
-// // 测试调用浏览器方法
-// function lnqsj() {
-//     clear()
-//     miaodian(testmsg1)
-// }
-//
-//
 function Administration() {
     G5BrowserFeatures.ShowElectricfence()
 }
@@ -163,5 +182,7 @@ $($('.Save_area_footer>button')[0]).click((e)=>{
 $('.Save_area_body>div>div>input').focus(()=>{
     $('.Save_area_body>div>div>input').attr('placeholder',"");
 })
+
+
 
 
