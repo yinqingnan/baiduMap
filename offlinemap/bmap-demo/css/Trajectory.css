@@ -1,0 +1,47 @@
+.Trajectoryheader{
+    height: 6vh;
+}
+.Trajectorybody{
+    height: 94vh;
+}
+.rili{
+    position: absolute;
+    top:-11px;
+    right: -82px;
+    z-index: 0;
+    color: #666;
+}
+.riqi{
+    position: relative;
+}
+.layui-form-item{
+    line-height: 60px;
+    margin: 0;
+    float: left;
+}
+.layui-form-label{
+    width: auto;
+    text-align: left;
+}
+.control{
+    float: right;
+    line-height: 60px;
+    margin-right: 22px;
+}
+.control>button{
+    width: 65px;
+    height: 30px;
+    border-radius: 5px;
+    border: 0;
+    cursor: pointer;
+    background: #169bd5;
+    color: #fff;
+}
+.control>button:last-child{
+    background: #fff;
+    color: #666;
+    border: 1px solid #333;
+}
+#test5{
+    width: 280px;
+}

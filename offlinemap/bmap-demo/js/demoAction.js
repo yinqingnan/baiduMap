@@ -390,7 +390,7 @@ myDrawingManagerObject.addEventListener('overlaycomplete', overlaycomplete);
 function overlaycomplete(e) {
 
     var cirCount = 0;
-    var polyCount = 0;
+    // var polyCount = 0;
 
     myDrawingManagerObject.close(); //关闭画图
 
