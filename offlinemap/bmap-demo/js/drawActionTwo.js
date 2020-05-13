@@ -53,7 +53,7 @@ var drawingManagerEntity = function () {
     };
     //存放绘制物(自动判断绘制物类型)，并返回是哪种类型
     var _storeOverlay = function (whitchOverlay) {
-        
+
         if (whitchOverlay instanceof BMap.Circle) {
             circleOverlays.push(whitchOverlay);
             return 3;
@@ -167,11 +167,11 @@ var publicDrawingManagertow = new drawingManagerEntity();
 publicDrawingManagertow.createDraw();
 publicDrawingManagertow.openCalculate();
 //绘制完成后事件(必须放在绑定监听事件之前)
-var overlaycomplete = function (e,num) {
+var overlaycomplete = function (e, num) {
     var cache1 = e.overlay;
     //存放绘制物
-    var whitchOver = publicDrawingManagertow.storeOverlay(cache1);            //当值为3 则为圆形，当值为4 则为多边形
-   
+    var whitchOver = publicDrawingManagertow.storeOverlay(cache1); //当值为3 则为圆形，当值为4 则为多边形
+
 
     if (whitchOver == 3) {
         var circleRadius = publicDrawingManagertow.getLastOverlay(3).getRadius(); //半径
@@ -181,29 +181,51 @@ var overlaycomplete = function (e,num) {
         viewDraw(3, circleRadius, circleLng, circleLat);
         return;
     } else if (whitchOver == 4) {
-        var polygon1 = publicDrawingManagertow.getLastOverlay(4);         //绘制出的多边形元素
-        var polygonArray = polygon1.getPath();         //将绘制多边形经纬度坐标进行保存并传输到浏览器
+        var polygon1 = publicDrawingManagertow.getLastOverlay(4); //绘制出的多边形元素
+        var polygonArray = polygon1.getPath(); //将绘制多边形经纬度坐标进行保存并传输到浏览器
         //  console.log(polygon1)
         viewDraw(4, polygonArray.length);
         //  console.log(polygonArray)
         var Str = JSON.stringify(polygonArray)
         // 双击完成绘制后弹出框Save_area
-        $(".Save_area").show()
-        // clearAll()
-        // var titleName=""
-        $($('.Save_area_footer>button')[1]).click((e)=>{
-            if($('.Save_area_body>div>div>input').val()!=""){
-                console.log(Str)    
-                let titleName=""
-                titleName=$('.Save_area_body>div>div>input').val()
-                console.log(titleName)
+        $(".Save_area").show();
 
-            }else{
-                $('.Save_area_body>div>div>input').attr('placeholder',"标注名称不能为空...");
-	            $('.Save_area_body>div>div>input').addClass('infoinput change')
+        $($('.Save_area_footer>button')[1]).one("click",(e) => {
+            if ($('.Save_area_body>div>div>input').val() != "") {
+                let titleName = ""
+                titleName = $('.Save_area_body>div>div>input').val()
+                if(titleName.length<5){
+                    var regex=/^[\u4e00-\u9fa50-9A-Za-z]+$/;
+                    var result=regex.test(titleName);
+                    if(result==false){
+                        $('.Save_area_body>div>div>input').attr('value', "禁止输入特殊符号");
+                        $('.Save_area_body>div>div>input').val("禁止输入特殊符号")
+                    }else{
+                        var Zoomlevel = map.getZoom() //获取到当前界面缩放等级
+                        G5BrowserFeatures.SaveGisArea(titleName, Str,Zoomlevel).then(res=>{
+                            $('.Save_area .infoinput').val('');
+                            if(res){
+                                $('.Save_area .infoinput').val('');
+                                $(".Save_area").hide();
+                                layer.msg('保存成功');
+                                map.clearOverlays(polygonArray);
+                            }else{
+                                layer.msg('保存失败');
+
+                            }
+                        })
+
+                    }
+
+                }else{
+                    $('.Save_area_body>div>div>input').val("字数不能超过五位数")
+                }
+            } else {
+                $('.Save_area_body>div>div>input').attr('placeholder', "标注名称不能为空...");
+                $('.Save_area_body>div>div>input').addClass('infoinput change')
             }
         })
-        
+
     }
 };
 
@@ -219,6 +241,7 @@ function clearAll() {
         drawlist.removeChild(drawlist.lastChild);
     }
 };
+
 function openDrawtwo(num) {
     publicDrawingManagertow.openDrawtwo(num);
 }
@@ -250,7 +273,3 @@ function viewDraw(isoverlays, positons, circleLng, circleLat) {
     var drawList = document.getElementById("drawlist");
     drawList.appendChild(fragment1);
 };
-
-
-
- 

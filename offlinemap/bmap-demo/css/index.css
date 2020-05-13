@@ -2,10 +2,11 @@ body, html, #allmap {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    font-family: "微软雅黑";
+    /* font-family: "微软雅黑"; */
+    font-family: "微软雅黑" !important
 }
 
-*{
+* {
     padding: 0;
     margin: 0;
 }
@@ -116,6 +117,7 @@ body, html, #allmap {
     line-height: 1;
     text-indent: 20px;
     font-weight: 500;
+    margin-top: 12px;
 }
 
 #ctrl_div {
@@ -134,53 +136,85 @@ body, html, #allmap {
     height: 30px;
     /* margin-top: 20px; */
 }
-.content_left{
-    float: left;
-    width: 50%;
-}
-.content_right{
-    float: left;
-    width: 50%;
 
+.content_left {
+    float: left;
+    width: 50%;
 }
+
+.content_right {
+    float: left;
+    width: 50%;
+}
+
 .content_right>h1 {
     font-size: 14px;
     line-height: 1;
     color: #333;
     font-weight: 500;
-    float: left; line-height: 30px;
+    float: left;
+    line-height: 30px;
 }
 
 .content_right>h2 {
     font-size: 14px;
     line-height: 1;
-    color:#666;
+    color: #666;
     font-weight: 500;
     line-height: 30px;
     float: left;
 }
+
 .content_left>h1 {
     font-size: 14px;
     line-height: 1;
     color: #333;
     float: left;
-    font-weight: 500; line-height: 30px;
+    font-weight: 500;
+    line-height: 30px;
 }
 
 .content_left>h2 {
     font-size: 14px;
     line-height: 1;
-    color:#666;
+    color: #666;
     font-weight: 500;
-    float: left; line-height: 30px;
+    float: left;
+    line-height: 30px;
+}
+.content{
+    display: flex;
+    justify-content: space-around;
+    margin-top: 2px;
+}
+.content>button{
+    display: block;
+}
+.content_support{
+    display: flex;
+    justify-content: space-around;
+    margin-top: 38px;
+}
+.content_support>button{
+    width: 15%;
+    margin: 0 2px;
+    height: 25px;
+    line-height: 25px;
+    border: 0;
+    background: #233b66;
+    color: #fff;
+    outline: none;
+    cursor: pointer;
 }
 .BMap_scaleCtrl {
-    top: 90px !important;
+    /* bottom: 10px !important; */
+    /* left: 10px !important; */
+    /* top: 900px !important; */
 }
 
-.BMap_stdMpType0 {
+/* .BMap_stdMpType0 {
     top: 60px !important;
-}
+} */
 
 .CompanySearch {
     position: absolute;
@@ -213,16 +247,16 @@ body, html, #allmap {
 .BMap_noprint>div:nth-of-type(3) {
     display: none;
 }
+
 /* .BMap_noprint{
     top: 0 !important;
     bottom: 50px !important;
 } */
 
-
-
 /* .anchorTR{
     bottom: 0 !important;
 } */
+
 .search {
     height: 34px;
     line-height: 34px;
@@ -238,52 +272,57 @@ body, html, #allmap {
     background: #2e77e5;
 }
 
-.BMapLib_box:hover{
+.BMapLib_box:hover {
     background: #2e77e5;
-
 }
-.BMapLib_box{
+
+.BMapLib_box {
     display: block;
     line-height: 30px;
     outline: none;
     background: #3385ff;
     border: 0;
     color: #fff;
-    margin-top: 8px;width: auto;
+    margin-top: 8px;
+    width: auto;
     padding: 0 10px;
     cursor: pointer;
 }
-.anniu{
+
+.anniu {
     position: absolute;
     top: 400px;
-    left :0;
+    left: 0;
     width: 200px;
 }
 
-
-
 /*隐藏左下角百度logo*/
+
 .BMap_cpyCtrl {
     display: none;
 }
+
 .anchorBL {
     display: none;
 }
+
 /*隐藏左下角百度logo*/
 
-.menu{
+.menu {
     position: absolute;
     top: 20px;
     right: 20px;
 }
-.menu>ul{
+
+.menu>ul {
     background: #fff;
     height: 37px;
     /* width: 400px; */
     box-sizing: border-box;
     /* line-height: 37px; */
 }
-.menu li{
+
+.menu li {
     /* width: 100px; */
     float: left;
     list-style: none;
@@ -298,40 +337,46 @@ body, html, #allmap {
     cursor: pointer;
     line-height: 1;
 }
-.menu li:nth-of-type(4){
+
+.menu li:nth-of-type(4) {
     border: 0;
 }
-.menu li>span:nth-of-type(1){
+
+.menu li>span:nth-of-type(1) {
     margin-right: 4px;
     color: #666;
 }
-.menu li>span:nth-of-type(2){
+
+.menu li>span:nth-of-type(2) {
     margin-left: 4px;
-    font-weight:100;
+    font-weight: 100;
     font-size: 5px;
     color: #666;
-
 }
-.Location{
+
+.Location {
     font-weight: 500;
     color: #333 !important;
-    font-style:normal
+    font-style: normal
 }
-.BMap_bubble_title>h1{
+
+.BMap_bubble_title>h1 {
     float: left;
     font-size: 16px;
     font-weight: 600;
     line-height: 34px;
     height: 34px;
 }
-.BMap_bubble_title>h2{
+
+.BMap_bubble_title>h2 {
     float: left;
     font-size: 16px;
     font-weight: 600;
     line-height: 34px;
     height: 34px;
 }
-.content>button{
+
+.content>button {
     width: 15%;
     margin: 0 2px;
     height: 25px;
@@ -342,16 +387,19 @@ body, html, #allmap {
     outline: none;
     cursor: pointer;
 }
-.tc{
+
+.tc {
     position: absolute;
     top: 64px;
     right: 128px;
-    width: 366px;
+    width: 346px;
     height: 444px;
     background: #fff;
     display: none;
+    padding: 0 10px;
 }
-#r-result{
+
+#r-result {
     position: absolute;
     top: 54px;
     width: 300px;
@@ -360,111 +408,119 @@ body, html, #allmap {
     overflow: auto;
     /* padding: 0 32px; */
 }
-#suggestId{
-    width: 196px;
+
+#suggestId {
+    width: 300px;
 }
-.tangram-suggestion-main{
+
+.tangram-suggestion-main {
     height: 200px;
 }
-.zy{
+
+.zy {
     width: 60px !important;
     height: 30px !important;
     float: left;
-
 }
-.jcjb{
+
+.jcjb {
     width: 60px !important;
     height: 30px !important;
     line-height: 30px !important;
     float: left;
 }
-.positioning{
-    float: right;
-    width: 110px;
+
+.positioning {
+    /* float: right; */
+    margin-top: 42px;
+    width: 100%;
     display: flex;
     line-height: 55px;
 }
-.positioning>h1{
-    font-size: 12px;
+
+.positioning>h1 {
+    font-size: 14px;
+    line-height: 55px;
+    width: 30%;
+
 }
-.positioning>i{
+
+.positioning>i {
     font-size: 12px;
     text-decoration: underline;
     color: #0b78e3 !important;
+    cursor: pointer;
+    width: 70%;
 }
 
-.Enclosure{
+.Enclosure {
     position: absolute;
     top: 58px;
     right: 138px;
     display: none;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1)
 }
-.Enclosure>ul{
+
+.Enclosure>ul {
     width: 120px;
     background: #fff;
     height: 60px;
-
 }
-.Enclosure>ul>li{
+
+.Enclosure>ul>li {
     border: 0;
     margin: 0;
     padding: 0;
     width: 100%;
-    height:30px ;
+    height: 30px;
     line-height: 30px;
     text-align: center;
     list-style: none;
     transition: all 0.2s;
 }
-.Enclosure>ul>li:hover{
+
+.Enclosure>ul>li:hover {
     background: #3385ff;
     color: #fff;
 }
-.menu>ul>li:nth-of-type(3){
+
+.menu>ul>li:nth-of-type(3) {
     position: relative;
 }
-/* .affirm{
-    position: absolute;
-    width: 380px;
-    height: 200px;
-    background: #fff;
-
-    top: 0;
-    left: 0;
-} */
-.Tool{
+.Tool {
     position: absolute;
     top: 58px;
     right: 20px;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
     display: none;
 }
-.Tool>ul{
+
+.Tool>ul {
     width: 120px;
     background: #fff;
     height: 90px;
 }
-.Tool>ul>li{
+
+.Tool>ul>li {
     border: 0;
     margin: 0;
     padding: 0;
     width: 100%;
-    height:30px ;
+    height: 30px;
     line-height: 30px;
     text-align: center;
     list-style: none;
     transition: all 0.2s;
 }
 
-.Tool>ul>li:hover{
+.Tool>ul>li:hover {
     background: #3385ff;
     color: #fff;
 }
 
-
 /* 区域保存弹窗 */
-.Save_area{
+
+.Save_area {
     position: absolute;
     z-index: 10;
     background: #eff2f7;
@@ -472,45 +528,56 @@ body, html, #allmap {
     height: 183px;
     top: 50%;
     left: 50%;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
     display: none;
 }
-.Save_area_header{
+
+.Save_area_header {
     background: #d1d7df;
     height: 40px;
     display: flex;
     justify-content: space-between;
-    padding:0 10px
-
+    padding: 0 10px
 }
-.Save_area_header>h1{
+
+.Save_area_header>h1 {
     font-size: 14px;
     color: #000;
     line-height: 40px;
-    -moz-user-select: none; /*火狐*/
-    -webkit-user-select: none; /*webkit浏览器*/
-    -ms-user-select: none; /*IE10*/
-    -khtml-user-select: none; /*早期浏览器*/
+    -moz-user-select: none;
+    /*火狐*/
+    -webkit-user-select: none;
+    /*webkit浏览器*/
+    -ms-user-select: none;
+    /*IE10*/
+    -khtml-user-select: none;
+    /*早期浏览器*/
     user-select: none;
 }
-.Save_area_header>h2{
+
+.Save_area_header>h2 {
     font-size: 14px;
     color: #000;
     line-height: 40px;
     cursor: pointer;
     outline: none;
-    -moz-user-select: none; /*火狐*/
-    -webkit-user-select: none; /*webkit浏览器*/
-    -ms-user-select: none; /*IE10*/
-    -khtml-user-select: none; /*早期浏览器*/
+    -moz-user-select: none;
+    /*火狐*/
+    -webkit-user-select: none;
+    /*webkit浏览器*/
+    -ms-user-select: none;
+    /*IE10*/
+    -khtml-user-select: none;
+    /*早期浏览器*/
     user-select: none;
-
 }
-.Save_area_body{
+
+.Save_area_body {
     height: 72px;
 }
-.Save_area_footer{
-    height:38px;
+
+.Save_area_footer {
+    height: 38px;
     background: #e0e5eb;
     line-height: 38px;
     display: flex;
@@ -518,22 +585,22 @@ body, html, #allmap {
     align-items: center;
     padding-right: 10px;
 }
-.Save_area_body>div>div>input{
+
+.Save_area_body>div>div>input {
     outline: none;
-    border-radius: 5px;
     border: 1px solid #d9d9d9;
-    /* line-height: 30px; */
     height: 30px;
     text-indent: 10px;
     width: 100%;
 }
 
-.Save_area_body>div>p>i{
+.Save_area_body>div>p>i {
     color: #e1273e;
     margin-right: 6px;
-    font-style:normal
+    font-style: normal
 }
-.Save_area_body>div>p{
+
+.Save_area_body>div>p {
     color: #000;
     font-size: 14px;
     line-height: 30px;
@@ -541,37 +608,73 @@ body, html, #allmap {
     width: 20%;
     text-align: center;
 }
-.Save_area_body>div{
+
+.Save_area_body>div {
     display: flex;
     height: 30px;
     line-height: 1;
     width: 100%;
     padding: 0 12px 0 10px;
 }
-.Save_area_body>div>div{
+
+.Save_area_body>div>div {
     width: 80%;
 }
-.Save_area_body{
+
+.Save_area_body {
     display: flex;
     height: 65px;
-    padding-top:40px ;
+    padding-top: 40px;
 }
 
-.Save_area_footer>button{
+.Save_area_footer>button {
     width: 44px;
     height: 26px;
     line-height: 26px;
-    border-radius: 5px;
-    background:#1890ff ;
+    background: #1890ff;
     border: 1px solid #1890ff;
     outline: none;
     cursor: pointer;
+    color: #fff;
 }
-.Save_area_footer>button:first-child{
-    border: 1px solid #cacace ;
+
+.Save_area_footer>button:first-child {
+    border: 1px solid #cacace;
     background: #fff;
     margin-right: 5px;
+    color: #666;
 }
+
 .infoinput.change::-webkit-input-placeholder {
     color: red;
+}
+
+.position_model {
+    margin-top: 20px;
+}
+
+.position_model>h2 {
+    font-size: 14px;
+}
+
+.nameList {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.nameList>li {
+    width: 14%;
+    text-align: center;
+    list-style: none;
+    height: 36px;
+    border-bottom: 1px solid #0078d7;
+    margin-top: 10px;
+    line-height: 49px;
+    cursor: pointer;
+    margin: 0 4px;
+    overflow:hidden;
+	white-space:nowrap;
+	text-overflow: ellipsis;
+    /* text-decoration: underline; */
+
 }

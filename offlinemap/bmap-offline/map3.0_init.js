@@ -27,6 +27,6 @@ if( bmapConfig.tiles_hybrid_path.length == 0 ){
 }
 //调试日志，请保留
 function bmapLog(s){
-  if(typeof console != 'undefined')
-    console.log('>>> '+s);
+  // if(typeof console != 'undefined')
+    // console.log('>>> '+s);
 }
