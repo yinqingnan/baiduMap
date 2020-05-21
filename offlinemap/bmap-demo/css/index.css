@@ -140,6 +140,10 @@ body, html, #allmap {
 .content_left {
     float: left;
     width: 50%;
+    display: flex;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .content_right {
@@ -181,6 +185,9 @@ body, html, #allmap {
     font-weight: 500;
     float: left;
     line-height: 30px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .content{
     display: flex;
@@ -366,6 +373,10 @@ body, html, #allmap {
     font-weight: 600;
     line-height: 34px;
     height: 34px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 200px;
 }
 
 .BMap_bubble_title>h2 {
@@ -477,6 +488,8 @@ body, html, #allmap {
     text-align: center;
     list-style: none;
     transition: all 0.2s;
+    cursor: pointer;
+    font-size: 12px;
 }
 
 .Enclosure>ul>li:hover {
@@ -511,6 +524,8 @@ body, html, #allmap {
     text-align: center;
     list-style: none;
     transition: all 0.2s;
+    cursor: pointer;
+    font-size: 12px;
 }
 
 .Tool>ul>li:hover {

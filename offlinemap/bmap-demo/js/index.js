@@ -1,3 +1,5 @@
+
+const map = new BMap.Map("allmap");
 if (typeof map != 'undefined') {
     map.addEventListener("zoomend", function (e) {
         layer.msg('地图级别: ' + map.getZoom() + (map.getZoom() > 14 ? ', 示例中只有15级地图,超过的无法显示!' : ''), {'offset': 'b'});
@@ -6,14 +8,16 @@ if (typeof map != 'undefined') {
 
 var strLongitude = "";
 var strLatitude = "";
-var CityName="";
+var CityName="XXX";
 // 百度地图API功能
 // 定义默认的精度，维度
-var strLongitude = "106.53063501";
-var strLatitude = "29.54460611";
-const map = new BMap.Map("allmap");
+strLongitude = "106.53063501";
+strLatitude = "29.54460611";
 var point = new BMap.Point(strLongitude, strLatitude);
+// console.log(point)
 map.centerAndZoom(point, 13);                   //初始化地图位置和地图放大等级
+
+
 
 // G5BrowserFeatures.GetSystemGis().then(res => {
 //     let obj = JSON.parse(res);
@@ -140,7 +144,6 @@ $(".menuone").click(function (e) {
     G5BrowserFeatures.GetGisAreaList().then(res => {
         if (res != "") {
             var Str = JSON.parse(res);
-    console.log($(".nameList"));
             for (var i in Str) {
 
                 $(".nameList").append($("<li class='Listbtn'></li>").text(Str[i].Name))

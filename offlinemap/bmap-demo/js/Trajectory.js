@@ -9,14 +9,14 @@ map.centerAndZoom(point, 13);
 
 
 
-// G5BrowserFeatures.GetSystemGis().then(res => {
-//     let obj = JSON.parse(res);
-//     strLongitude = obj.x
-//     strLatitude = obj.y
-//     strCityName = obj.CityName
-//     var point = new BMap.Point(strLongitude, strLatitude);
-//     map.centerAndZoom(point, 13); //地图位置和地图放大等级
-// });
+G5BrowserFeatures.GetSystemGis().then(res => {
+    let obj = JSON.parse(res);
+    strLongitude = obj.x
+    strLatitude = obj.y
+    strCityName = obj.CityName
+    var point = new BMap.Point(strLongitude, strLatitude);
+    map.centerAndZoom(point, 13); //地图位置和地图放大等级
+});
 
 // 添加比例尺、缩放、平移工具条
 map.enableScrollWheelZoom(); //启动鼠标滚轮缩放地图

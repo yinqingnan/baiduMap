@@ -183,49 +183,14 @@ var overlaycomplete = function (e, num) {
     } else if (whitchOver == 4) {
         var polygon1 = publicDrawingManagertow.getLastOverlay(4); //绘制出的多边形元素
         var polygonArray = polygon1.getPath(); //将绘制多边形经纬度坐标进行保存并传输到浏览器
-        //  console.log(polygon1)
+        //  console.log(polygon1)
         viewDraw(4, polygonArray.length);
-        //  console.log(polygonArray)
+        //  console.log(polygonArray)
         var Str = JSON.stringify(polygonArray)
-        // 双击完成绘制后弹出框Save_area
-        $(".Save_area").show();
-
-        $($('.Save_area_footer>button')[1]).one("click",(e) => {
-            if ($('.Save_area_body>div>div>input').val() != "") {
-                let titleName = ""
-                titleName = $('.Save_area_body>div>div>input').val()
-                if(titleName.length<5){
-                    var regex=/^[\u4e00-\u9fa50-9A-Za-z]+$/;
-                    var result=regex.test(titleName);
-                    if(result==false){
-                        $('.Save_area_body>div>div>input').attr('value', "禁止输入特殊符号");
-                        $('.Save_area_body>div>div>input').val("禁止输入特殊符号")
-                    }else{
-                        var Zoomlevel = map.getZoom() //获取到当前界面缩放等级
-                        G5BrowserFeatures.SaveGisArea(titleName, Str,Zoomlevel).then(res=>{
-                            $('.Save_area .infoinput').val('');
-                            if(res){
-                                $('.Save_area .infoinput').val('');
-                                $(".Save_area").hide();
-                                layer.msg('保存成功');
-                                map.clearOverlays(polygonArray);
-                            }else{
-                                layer.msg('保存失败');
-
-                            }
-                        })
-
-                    }
-
-                }else{
-                    $('.Save_area_body>div>div>input').val("字数不能超过五位数")
-                }
-            } else {
-                $('.Save_area_body>div>div>input').attr('placeholder', "标注名称不能为空...");
-                $('.Save_area_body>div>div>input').addClass('infoinput change')
-            }
-        })
-
+        //清空
+        map.clearOverlays(polygonArray);
+        // 双击完成绘制后弹出框Save_area
+        G5BrowserFeatures.CreateGisArea(Str, map.getZoom());
     }
 };
 
@@ -241,7 +206,7 @@ function clearAll() {
         drawlist.removeChild(drawlist.lastChild);
     }
 };
-
+// 绘制方法   传入固定数值    5
 function openDrawtwo(num) {
     publicDrawingManagertow.openDrawtwo(num);
 }
