@@ -228,13 +228,19 @@ var Api_TracePoint = function (newGis, oldGis, clear, showMarker) {
                     var allOverlay = map.getOverlays();
                     for (var i = 0; i < allOverlay.length; i++) {
                         if (allOverlay[i] instanceof BMap.Marker) {
-                            // console.log(allOverlay[i].getLabel().content)
                             if (allOverlay[i].getLabel() != null) { //通过id删除
                                 if (allOverlay[i].getLabel().content == oldGis.id) {
                                     map.removeOverlay(allOverlay[i]);
-                                    resolve()
+                                    map.closeInfoWindow(); //关闭信息窗口
                                 }
                             }
+                            if(allOverlay[i].getPosition()!=null){
+                                if (allOverlay[i].getPosition().lng == oldGis.strLongitude) {
+                                    map.removeOverlay(allOverlay[i]);
+                                    map.closeInfoWindow(); //关闭信息窗口
+                                }
+                            }
+                            resolve()
                         }
                     }
                 })
