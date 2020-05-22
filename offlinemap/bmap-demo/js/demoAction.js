@@ -214,6 +214,12 @@ var Api_TracePoint = function (newGis, oldGis, clear, showMarker) {
                             map.removeOverlay(allOverlay[i]);
                         }
                     }
+                    if(allOverlay[i].getPosition()!=null){
+                        if (allOverlay[i].getPosition().lng == newGis.strLongitude) {
+                            map.removeOverlay(allOverlay[i]);
+                            map.closeInfoWindow(); //关闭信息窗口
+                        }
+                    }
                 }
             }
         } else {
@@ -984,7 +990,51 @@ function Api_RailPoint(newGis, oldGis, clear, RingPointcomeIn) {
                 map.closeInfoWindow(); //关闭信息窗口
                 map.removeOverlay(RingPointmarker)
             }, 5000);
-            RingPointInfoWindow(newGis, RingPointmarker, point)
+            RingPointInfoWindow(newGis, RingPointmarker, point,RingPointcomeIn)
+            function RingPointInfoWindow(newGis, sosmarker, point,RingPointcomeIn) {
+                let opts = {
+                    width: 300, // 信息窗口宽度
+                    height: 180, // 信息窗口高度
+                };
+                var html = [];
+               
+                        if (RingPointcomeIn) {
+                            RingPointcomeIntext = "禁入"
+                        } else {
+                            RingPointcomeIntext = "禁出"
+                        }
+                        var dw = res.result.formatted_address
+                        html.push('<ul>');
+                        html.push('<li class="content">');
+                        html.push('<div class="content_left" style="width:100%"> <h1 style="font-weight:800;vertical-align:top;white-space:nowrap;word-break:keep-all;width:100%;font-size: 18px;"><span  style="color:red;font-weight:800">[' + RingPointcomeIntext + ']</span> ' + newGis.strName + '</h1></div>');
+                        html.push('</li>');
+                        html.push('<li class="content">');
+                        html.push('<div class="content_left"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all">通讯号:</h1> <h2 style="vertical-align:top;">' + newGis.strNum + ' </h2></div>');
+                        html.push('<div class="content_left"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all">部门:</h1> <h2 style="vertical-align:top;">' + newGis.deptName + ' </h2></div>');
+                        html.push('</li>');
+            
+                        html.push('<li class="content">');
+                        html.push('<div class="content_left"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all">职位:</h1> <h2 style="vertical-align:top;">' + newGis.strPosition + ' </h2></div>');
+                        html.push('<div class="content_left"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all">手机:</h1> <h2 style="vertical-align:top;">' + newGis.strMobileNum + ' </h2></div>');
+                        html.push('</li>');
+            
+                        html.push('<li class="content">');
+                        html.push('<div class="content_left" style="width:100%"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all;width:30%">位置:</h1> <h2 style="vertical-align:top;width:70%;overflow: hidden;text-overflow:ellipsis;white-space: nowrap"  >' + '离线模式无法显示位置信息' + ' </h2></div>');
+            
+                        html.push('</li>');
+            
+                        html.push('<li class="content">');
+                        html.push('<div class="content_left" style="width:100%"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all;width:30%">警告时间:</h1> <h2 style="vertical-align:top; width:70%;color:#ff6600;">' + newGis.lastDate + ' </h2></div>');
+                        html.push('<li class="content">');
+                        html.push('</ul>');
+                        var infoWindow = new BMap.InfoWindow(html.join(""), opts); // 创建信息窗口对象
+                        sosmarker.addEventListener("click", function () {
+                            map.openInfoWindow(infoWindow, point); //开启信息窗口
+                        });
+                        sosmarker.setAnimation(BMAP_ANIMATION_BOUNCE); //让标点跳动的动画
+                        map.openInfoWindow(infoWindow, point)
+               
+            }
             RingPointcomeIntext = null
 
 
@@ -1159,48 +1209,4 @@ $(".load").click(() => {
 })
 
 
-// TODO超界描点弹窗
-function RingPointInfoWindow(newGis, sosmarker, point) {
-    let opts = {
-        width: 300, // 信息窗口宽度
-        height: 180, // 信息窗口高度
-    };
-    var html = [];
-   
-            if (RingPointcomeIn) {
-                RingPointcomeIntext = "禁入"
-            } else {
-                RingPointcomeIntext = "禁出"
-            }
-            var dw = res.result.formatted_address
-            html.push('<ul>');
-            html.push('<li class="content">');
-            html.push('<div class="content_left" style="width:100%"> <h1 style="font-weight:800;vertical-align:top;white-space:nowrap;word-break:keep-all;width:100%;font-size: 18px;"><span  style="color:red;font-weight:800">[' + RingPointcomeIntext + ']</span> ' + newGis.strName + '</h1></div>');
-            html.push('</li>');
-            html.push('<li class="content">');
-            html.push('<div class="content_left"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all">通讯号:</h1> <h2 style="vertical-align:top;">' + newGis.strNum + ' </h2></div>');
-            html.push('<div class="content_left"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all">部门:</h1> <h2 style="vertical-align:top;">' + newGis.deptName + ' </h2></div>');
-            html.push('</li>');
 
-            html.push('<li class="content">');
-            html.push('<div class="content_left"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all">职位:</h1> <h2 style="vertical-align:top;">' + newGis.strPosition + ' </h2></div>');
-            html.push('<div class="content_left"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all">手机:</h1> <h2 style="vertical-align:top;">' + newGis.strMobileNum + ' </h2></div>');
-            html.push('</li>');
-
-            html.push('<li class="content">');
-            html.push('<div class="content_left" style="width:100%"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all;width:30%">位置:</h1> <h2 style="vertical-align:top;width:70%;overflow: hidden;text-overflow:ellipsis;white-space: nowrap"  >' + '离线模式无法显示位置信息' + ' </h2></div>');
-
-            html.push('</li>');
-
-            html.push('<li class="content">');
-            html.push('<div class="content_left" style="width:100%"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all;width:30%">警告时间:</h1> <h2 style="vertical-align:top; width:70%;color:#ff6600;">' + newGis.lastDate + ' </h2></div>');
-            html.push('<li class="content">');
-            html.push('</ul>');
-            var infoWindow = new BMap.InfoWindow(html.join(""), opts); // 创建信息窗口对象
-            sosmarker.addEventListener("click", function () {
-                map.openInfoWindow(infoWindow, point); //开启信息窗口
-            });
-            sosmarker.setAnimation(BMAP_ANIMATION_BOUNCE); //让标点跳动的动画
-            map.openInfoWindow(infoWindow, point)
-   
-}
