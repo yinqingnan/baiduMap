@@ -26,14 +26,21 @@ var point = new BMap.Point(strLongitude, strLatitude);
 map.centerAndZoom(point, 13);   //初始化地图位置和地图放大等级
 
 G5BrowserFeatures.GetSystemGis().then(res => {
-    let obj = JSON.parse(res);
-    strLongitude = obj.x
-    strLatitude = obj.y
-    strCityName = obj.CityName
-    var point = new BMap.Point(strLongitude, strLatitude);
-    map.centerAndZoom(point, 13); //地图位置和地图放大等级
-    $(".Location")[0].innerHTML = strCityName;
-    $(".Location")[1].innerHTML = strCityName;
+    if (res != "" && res != null && res != undefined) {
+        let obj = JSON.parse(res);
+        strLongitude = obj.x
+        strLatitude = obj.y
+        strCityName = obj.CityName
+        var point = new BMap.Point(strLongitude, strLatitude);
+        map.centerAndZoom(point, 13); //地图位置和地图放大等级
+        $(".Location")[0].innerHTML = strCityName;
+        $(".Location")[1].innerHTML = strCityName;
+    }else{
+        strLongitude = 116.405994;
+        strLatitude = 39.913828;
+        CityName="北京市";
+    }
+   
 });
 
 
