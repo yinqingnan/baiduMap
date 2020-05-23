@@ -186,14 +186,12 @@ var overlaycomplete = function (e,num) {
     } else if (whitchOver == 4) {
         var polygon1 = publicDrawingManager.getLastOverlay(4);         //绘制出的多边形元素
         var polygonArray = polygon1.getPath();         //将绘制多边形经纬度坐标进行保存并传输到浏览器
-        //  console.log(polygon1)
         viewDraw(4, polygonArray.length);
-        //  console.log(polygonArray)
         var Str = JSON.stringify(polygonArray)
         //  外部浏览器接口
         G5BrowserFeatures.CreateElectricfence(Str).then(res=>{
             if(res){
-                map.clearOverlays(polygonArray);
+                map.removeOverlay(polygon1);
             }
         })
 
