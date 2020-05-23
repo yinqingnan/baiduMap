@@ -6,29 +6,35 @@ if (typeof map != 'undefined') {
     });
 }
 
+// var strLongitude = "";
+// var strLatitude = "";
+// var CityName="XXX";
+// // 百度地图API功能
+// // 定义默认的精度，维度
+// strLongitude = "106.53063501";
+// strLatitude = "29.54460611";
+// var point = new BMap.Point(strLongitude, strLatitude);
+// // console.log(point)
+// map.centerAndZoom(point, 13);   //初始化地图位置和地图放大等级
+
 var strLongitude = "";
 var strLatitude = "";
 var CityName="XXX";
 // 百度地图API功能
 // 定义默认的精度，维度
-strLongitude = "106.53063501";
-strLatitude = "29.54460611";
 var point = new BMap.Point(strLongitude, strLatitude);
-// console.log(point)
-map.centerAndZoom(point, 13);                   //初始化地图位置和地图放大等级
+map.centerAndZoom(point, 13);   //初始化地图位置和地图放大等级
 
-
-
-// G5BrowserFeatures.GetSystemGis().then(res => {
-//     let obj = JSON.parse(res);
-//     strLongitude = obj.x
-//     strLatitude = obj.y
-//     strCityName = obj.CityName
-//     var point = new BMap.Point(strLongitude, strLatitude);
-//     map.centerAndZoom(point, 13); //地图位置和地图放大等级
-//     $(".Location")[0].innerHTML = strCityName;
-//     $(".Location")[1].innerHTML = strCityName;
-// });
+G5BrowserFeatures.GetSystemGis().then(res => {
+    let obj = JSON.parse(res);
+    strLongitude = obj.x
+    strLatitude = obj.y
+    strCityName = obj.CityName
+    var point = new BMap.Point(strLongitude, strLatitude);
+    map.centerAndZoom(point, 13); //地图位置和地图放大等级
+    $(".Location")[0].innerHTML = strCityName;
+    $(".Location")[1].innerHTML = strCityName;
+});
 
 
 

@@ -3,6 +3,14 @@ var userinfoAry = [];
 var userinfoIndex = 0;
 
 
+
+
+// TODO跟踪状态全局
+var Trackstate=true
+
+
+
+
 function All_clear() {
     clear()
 }
@@ -59,25 +67,61 @@ function Monitor(a, b, c, d) {
 
 // 跟踪
 var index = 0
-
 function Track(a, b, c, d) {
-    let obj = {
-        strLongitude: a,
-        strLatitude: b,
-        strNum: c,
-        strName: d
-    };
-
-    let allOverlay = map.getOverlays();
-    for (let i = 0; i < allOverlay.length - 1; i++) {
-        if (allOverlay[i] instanceof BMap.Marker) {
-            if (allOverlay[i].getPosition().lng == a && allOverlay[i].getPosition().lat == b) {
-                map.closeInfoWindow(); //关闭信息窗口
-                map.removeOverlay(allOverlay[i]); //删除指定坐标
+    if(Trackstate){ //判断当前跟踪状态
+        let obj = {
+            strLongitude: a,
+            strLatitude: b,
+            strNum: c,
+            strName: d
+        };
+        map.closeInfoWindow(); //关闭信息窗口
+        let line=map.getOverlays()
+        for(let i=0;i<line.length;i++){
+            if(line[i].toString().indexOf("Polyline") > 0){//删除折线
+                map.removeOverlay(line[i]);
             }
         }
+     
+        let promise= new Promise((resolve, reject) => {
+            let allOverlay = map.getOverlays();
+            for (let i = 0; i < allOverlay.length - 1; i++) {
+                if (allOverlay[i] instanceof BMap.Marker) {
+                    if (allOverlay[i].getPosition().lng == a && allOverlay[i].getPosition().lat == b) {
+                        // console.log(allOverlay[i].getPosition().lng,allOverlay[i].getPosition().lat)
+                        setTimeout(() => {
+                            map.removeOverlay(allOverlay[i]); //删除指定坐标
+                        }, 500);
+                    }
+                }
+                resolve()
+            }
+        })
+        promise.then(()=>{
+            let allOverlay = map.getOverlays();
+            for(let i=0;i<allOverlay.length;i++){
+                if (allOverlay[i] instanceof BMap.Marker) {
+                    if(allOverlay[i].getLabel() != null) { //通过id删除
+                        console.log(allOverlay[i].getLabel().content)
+                        if (allOverlay[i].getLabel().content == c) {
+                            map.removeOverlay(allOverlay[i]);
+                        }
+                    }
+                    Trackstate=false
+                    G5BrowserFeatures.Track(JSON.stringify(obj));
+                }
+                
+            }
+            
+    
+        })
+    }else{
+        // layer.alert("请先结束当前跟踪状态")
+        layer.msg('请先结束当前对警员：'+c +"  的跟踪状态", {icon: 2});
     }
-    G5BrowserFeatures.Track(JSON.stringify(obj));
+ 
+ 
+
 }
 
 // 监听
@@ -189,8 +233,17 @@ $(".normal").click(function () {
     Api_TracePoint(newGis, oldGis, false, showMarker)
 })
 $(".normal2").click(function () {
-    Api_TracePoint(newGis2, oldGis1, false, showMarker)
+    // Api_TracePoint(newGis2, oldGis1, false, showMarker)      //测试删除第一个描点后绘制新点
+    // Api_TracePoint(newGis, oldGis, true, showMarker)        //测试clear 清除
+
+    Api_TracePoint(newGis2, newGis, false, showMarker)      //测试缩小比例尺后再次定位
 })
+
+$(".normal3").click(function () {
+    Api_TracePoint(newGis2, null, true, false)      //测试缩小比例尺后再次定位
+})
+
+
 
 /**
  *  TODO  地图普通描点
@@ -262,15 +315,15 @@ var Api_TracePoint = function (newGis, oldGis, clear, showMarker) {
                         icon: myIcon
                     });
                     map.addOverlay(markerArr); //将标注添加到地图中
-                    markerArr.addEventListener("click", function (e) {
-                        normalInfoWindow(newGis, markerArr, point, e);
+                    markerArr.addEventListener("click", function () {
+                        normalInfoWindow(newGis, markerArr, point, showMarker);
                     });
 
                     function normalInfoWindow(res, sosmarker, point, showMarker) {
                         let opts = {
                             width: 320, // 信息窗口宽度
                             height: 222, // 信息窗口高度
-                            title: "<h1 title=" + '  ' + newGis.strName + ' ' + ">" + res.strName + '<h2>' + '(' + res.strNum + ')' + '</h2>' + "</h1>", // 信息窗口标题
+                            title: "<h1 title=" + '  ' + gis.strName + ' ' + ">" + gis.strName  + "</h1>", // 信息窗口标题
                         };
                         var html = [];
                         // 内层文字
@@ -309,8 +362,10 @@ var Api_TracePoint = function (newGis, oldGis, clear, showMarker) {
                         var infoWindow = new BMap.InfoWindow(html.join(""), opts); // 创建信息窗口对象
                         sosmarker.addEventListener("click", function () {
                             map.openInfoWindow(infoWindow, point); //自动开启信息窗口
+                            map.centerAndZoom(point, 19) //描点自动居中
+
                         });
-                        map.centerAndZoom(point, 19) //描点自动居中
+                        // map.centerAndZoom(point, 19) //描点自动居中
                         if (showMarker) {
                             map.openInfoWindow(infoWindow, point); //开启信息窗口
                             map.centerAndZoom(point, 19); //描点自动居中
@@ -347,14 +402,14 @@ var Api_TracePoint = function (newGis, oldGis, clear, showMarker) {
                 map.addOverlay(markerArr); //将标注添加到地图中
 
                 markerArr.addEventListener("click", function () {
-                    normalInfoWindow(newGis, markerArr, point);
+                    normalInfoWindow(newGis, markerArr, point,showMarker);
                 });
 
                 function normalInfoWindow(res, sosmarker, point, showMarker) {
                     let opts = {
                         width: 320, // 信息窗口宽度
                         height: 222, // 信息窗口高度
-                        title: "<h1 title=" + '  ' + newGis.strName + ' ' + ">" + res.strName + '<h2>' + '(' + res.strNum + ')' + '</h2>' + "</h1>", // 信息窗口标题
+                        title: "<h1 title=" + '  ' + gis.strName + ' ' + ">" + gis.strName  + "</h1>", // 信息窗口标题
                     };
                     $.ajax({
                         url: 'http://api.map.baidu.com/geocoder/v2/?ak=N1FRhUpF6M0lcGGY8K5MzSa0WoGhoGpO&location=' + point.lat + ',' + point.lng + '&output=json',
@@ -398,6 +453,8 @@ var Api_TracePoint = function (newGis, oldGis, clear, showMarker) {
                             html.push('</ul>');
                             sosmarker.addEventListener("click", function () {
                                 map.openInfoWindow(infoWindow, point); //自动开启信息窗口
+                                map.centerAndZoom(point, 19) //描点自动居中
+
                             });
                             var infoWindow = new BMap.InfoWindow(html.join(""), opts); // 创建信息窗口对象
                             if (showMarker == true) {
@@ -405,7 +462,7 @@ var Api_TracePoint = function (newGis, oldGis, clear, showMarker) {
                                 map.centerAndZoom(point, 19); //描点自动居中
                             }
                             // map.openInfoWindow(infoWindow, point); //自动开启信息窗口
-                            map.centerAndZoom(point, 19) //描点自动居中
+                            // map.centerAndZoom(point, 19) //描点自动居中
                         }
                     })
                 }
@@ -715,26 +772,24 @@ var gis = {
 var GisTrackingData = null;
 var timers = 5000;
 var timer = null;
+
+var show = setInterval(() => {
+    gis.strLongitude = gis.strLongitude + 0.001
+    gis.strLatitude = gis.strLatitude + 0.001
+}, 2000);
 var trackobj = {
     strNum: "",
     point: []
 }
-var show = setInterval(() => {
-    gis.strLongitude = gis.strLongitude + 0.005
-    gis.strLatitude = gis.strLatitude + 0.005
-}, 5000);
-
 
 var index = 0
 var Linearr = []
 var TrackingID = null
-
-
-
+var name=null
 // TODO跟踪
 var Api_MapTracking = function (gis, onOff) {
+    name = gis.strNum
     if (onOff) {
-        // 绘制点
         GisTrackingData = gis
         trackobj.strNum = gis.strNum
         TrackingID = gis.strNum
@@ -745,6 +800,13 @@ var Api_MapTracking = function (gis, onOff) {
                 icon: myIcon
             }); // 创建起点标注
             // map.centerAndZoom(point, 13);
+            let label = new BMap.Label(gis.strNum, {
+                offset: new BMap.Size(20, -10)
+            }); //新建声明label对象
+            label.setStyle({
+                display: "none"
+            })
+            trackmarker.setLabel(label);
             map.closeInfoWindow(); //关闭信息窗口
             map.addOverlay(trackmarker); // 将标注添加到地图中
             trackmarker.addEventListener("click", function () {
@@ -757,73 +819,103 @@ var Api_MapTracking = function (gis, onOff) {
                     height: 222, // 信息窗口高度
                     title: "<h1 title=" + '  ' + newGis.strName + ' ' + ">" + res.strName + '<h2>' + '(' + res.strNum + ')' + '</h2>' + "</h1>", // 信息窗口标题
                 };
-                var html = [];
-                html.push('<ul>');
-                html.push('<li class="content">');
-                html.push('<div class="content_left"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all">通讯号:</h1> <h2 style="vertical-align:top;">' + newGis.strNum + ' </h2></div>');
-                html.push('<div class="content_left"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all">部门:</h1> <h2 style="vertical-align:top;overflow:hidden;white-space:nowrap;text-overflow:ellipsis"  title="' + gis.deptName + '">' + gis.deptName + ' </h2></div>');
-                html.push('</li>');
+              
+                        var html = [];
+                        html.push('<ul>');
+                        html.push('<li class="content">');
+                        html.push('<div class="content_left"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all">通讯号:</h1> <h2 style="vertical-align:top;">' + newGis.strNum + ' </h2></div>');
+                        html.push('<div class="content_left"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all">部门:</h1> <h2 style="vertical-align:top;overflow:hidden;white-space:nowrap;text-overflow:ellipsis"  title="' + gis.deptName + '">' + gis.deptName + ' </h2></div>');
+                        html.push('</li>');
 
-                html.push('<li class="content">');
-                html.push('<div class="content_left"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all">职位:</h1> <h2 style="vertical-align:top;"  title="' + gis.strPosition + '">' + gis.strPosition + ' </h2></div>');
-                html.push('<div class="content_left"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all">手机:</h1> <h2 style="vertical-align:top;"  title="' + gis.strMobileNum + '">' + gis.strMobileNum + ' </h2></div>');
-                html.push('</li>');
+                        html.push('<li class="content">');
+                        html.push('<div class="content_left"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all">职位:</h1> <h2 style="vertical-align:top;"  title="' + gis.strPosition + '">' + gis.strPosition + ' </h2></div>');
+                        html.push('<div class="content_left"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all">手机:</h1> <h2 style="vertical-align:top;"  title="' + gis.strMobileNum + '">' + gis.strMobileNum + ' </h2></div>');
+                        html.push('</li>');
 
-                html.push('<li class="content">');
-                html.push('<div class="content_left"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all">经度:</h1> <h2 style="vertical-align:top;">' + gis.strLongitude + ' </h2></div>');
-                html.push('<div class="content_left"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all">纬度:</h1> <h2 style="vertical-align:top;">' + gis.strLatitude + ' </h2></div>');
-                html.push('</li>');
+                        html.push('<li class="content">');
+                        html.push('<div class="content_left"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all">经度:</h1> <h2 style="vertical-align:top;">' + gis.strLongitude + ' </h2></div>');
+                        html.push('<div class="content_left"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all">纬度:</h1> <h2 style="vertical-align:top;">' + gis.strLatitude + ' </h2></div>');
+                        html.push('</li>');
 
-                html.push('<li class="content">');
-                html.push('<div class="content_left" style="width:100%"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all;width:30%">位置:</h1> <h2 style="vertical-align:top;width:70%;overflow: hidden;text-overflow:ellipsis;white-space: nowrap" >' + '离线模式无法显示位置信息' + ' </h2></div>');
+                        html.push('<li class="content">');
+                        html.push('<div class="content_left" style="width:100%"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all;width:30%">位置:</h1> <h2 style="vertical-align:top;width:70%;overflow: hidden;text-overflow:ellipsis;white-space: nowrap"  >' + '离线模式无法显示位置信息' + ' </h2></div>');
 
-                html.push('</li>');
+                        html.push('</li>');
 
-                html.push('<li class="content">');
-                html.push('<div class="content_left" style="width:100%"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all;width:30%">上报时间:</h1> <h2 style="vertical-align:top; width:70%;color:#ff6600;">' + gis.lastDate + ' </h2></div>');
-                html.push('<li class="content">');
-                html.push('<button class="Voice" onclick="Voice(' + gis.strLongitude + ',' + gis.strLatitude + ',' + gis.strNum + ',\'' + gis.strName + '\')">语音</button>');
-                html.push('<button class="Video" onclick="Video(' + gis.strLongitude + ',' + gis.strLatitude + ',' + gis.strNum + ',\'' + gis.strName + '\')">视频</button>');
-                html.push('<button class="Monitor" onclick="Monitor(' + gis.strLongitude + ',' + gis.strLatitude + ',' + gis.strNum + ',\'' + gis.strName + '\')">监控</button>');
-                html.push('<button class="cancelMonitor" style="width: 18%" onclick="cancelMonitor(' + gis.strLongitude + ',' + gis.strLatitude + ',' + gis.strNum + ',\'' + gis.strName + '\')">取消跟踪</button>');
-                html.push('<button class="Information" onclick="Information(' + gis.strLongitude + ',' + gis.strLatitude + ',' + gis.strNum + ',\'' + gis.strName + '\')">监听</button>');
-                html.push('</li>');
-                html.push('</ul>');
-                let infoWindow = new BMap.InfoWindow(html.join(""), opts); // 创建信息窗口对象
-                map.openInfoWindow(infoWindow, point);
-            }
+                        html.push('<li class="content">');
+                        html.push('<div class="content_left" style="width:100%"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all;width:30%">上报时间:</h1> <h2 style="vertical-align:top; width:70%;color:#ff6600;">' + gis.lastDate + ' </h2></div>');
+                        html.push('<li class="content">');
+                        html.push('<button class="Voice" onclick="Voice(' + gis.strLongitude + ',' + gis.strLatitude + ',' + gis.strNum + ',\'' + gis.strName + '\')">语音</button>');
+                        html.push('<button class="Video" onclick="Video(' + gis.strLongitude + ',' + gis.strLatitude + ',' + gis.strNum + ',\'' + gis.strName + '\')">视频</button>');
+                        html.push('<button class="Monitor" onclick="Monitor(' + gis.strLongitude + ',' + gis.strLatitude + ',' + gis.strNum + ',\'' + gis.strName + '\')">监控</button>');
+                        html.push('<button class="cancelMonitor" style="width: 18%" onclick="cancelMonitor(' + gis.strLongitude + ',' + gis.strLatitude + ',' + gis.strNum + ',\'' + gis.strName + '\')">取消跟踪</button>');
+                        html.push('<button class="Information" onclick="Information(' + gis.strLongitude + ',' + gis.strLatitude + ',' + gis.strNum + ',\'' + gis.strName + '\')">监听</button>');
+                        html.push('</li>');
+                        html.push('</ul>');
+                        let infoWindow = new BMap.InfoWindow(html.join(""), opts); // 创建信息窗口对象
+                        map.openInfoWindow(infoWindow, point);
+              
+            } 
             if (trackobj.point.length == 1) {
-                var polyline = new BMap.Polyline([
-                    new BMap.Point(gis.strLongitude, gis.strLatitude),
-                    new BMap.Point(trackobj.point[0].point.lng, trackobj.point[0].point.lat)
-                ], {
-                    strokeColor: "red",
-                    strokeWeight: 3,
-                    strokeOpacity: 3
-                }); //创建折线
-                Linearr.push(polyline)
+                    var polyline = new BMap.Polyline([
+                        new BMap.Point(gis.strLongitude, gis.strLatitude),
+                        new BMap.Point(trackobj.point[0].point.lng, trackobj.point[0].point.lat)
+                    ], {
+                        strokeColor: "red",
+                        strokeWeight: 3,
+                        strokeOpacity: 3
+                    }); //创建折线
+                    Linearr.push(polyline)
             } else if (trackobj.point.length >= 2) {
-                var polyline = new BMap.Polyline([
-                    new BMap.Point(gis.strLongitude, gis.strLatitude),
-                    new BMap.Point(trackobj.point[trackobj.point.length - 1].point.lng, trackobj.point[trackobj.point.length - 1].point.lat)
-                ], {
-                    strokeColor: "red",
-                    strokeWeight: 3,
-                    strokeOpacity: 3
-                }); //创建折线
-                Linearr.push(polyline)
+                if(index==0){
+                    let promise= new Promise((resolve, reject) => {
+                        var line = map.getOverlays();
+                        for(let i=0;i<line.length;i++){
+                            console.log(line[i])
+                            if(line[i].toString().indexOf("Polyline") > 0){//删除折线
+                                map.removeOverlay(line[i]);
+                            } 
+                            if (line[i].toString() == "[object Polyline]") {
+                                map.removeOverlay(line[i]);
+                            }
+                        }
+                        resolve()
+                    })
+                    promise.then(()=>{
+                        var polyline = new BMap.Polyline([
+                            new BMap.Point(GisTrackingData.strLongitude, GisTrackingData.strLatitude),
+                            new BMap.Point(trackobj.point[trackobj.point.length - 1].point.lng, trackobj.point[trackobj.point.length - 1].point.lat)
+                        ], {
+                            strokeColor: "red",
+                            strokeWeight: 3,
+                            strokeOpacity: 3
+                        }); //创建折线
+                        Linearr.push(polyline)    
+                    })
+                }else{
+                    var polyline = new BMap.Polyline([
+                        new BMap.Point(GisTrackingData.strLongitude, GisTrackingData.strLatitude),
+                        new BMap.Point(trackobj.point[trackobj.point.length - 1].point.lng, trackobj.point[trackobj.point.length - 1].point.lat)
+                    ], {
+                        strokeColor: "red",
+                        strokeWeight: 3,
+                        strokeOpacity: 3
+                    }); //创建折线
+                    Linearr.push(polyline)
+                }
+            
             }
             map.addOverlay(polyline); //添加线条到地图
-            if (trackobj.point.length >= 1) {
+            if (trackobj.point.length >= 1) {       //删除跟踪的上一个点
                 for (let i = 0; i < trackobj.point.length; i++) {
                     map.removeOverlay(trackobj.point[i])
                 }
             }
             timer = setTimeout(() => {
                 if (GisTrackingData) {
-                    G5BrowserFeatures.GetMemberGisById(gis.strNum).then(res => {
-                        gis = JSON.parse(res)
-                        Api_MapTracking(gis, true);
+                    G5BrowserFeatures.GetMemberGisById(name).then(res => {
+                        res = JSON.parse(res)
+                        Api_MapTracking(res, true);
                     })
                 }
             }, 5000)
@@ -834,25 +926,57 @@ var Api_MapTracking = function (gis, onOff) {
             for (let i = 0; i < Linearr.length; i++) {
                 map.removeOverlay(Linearr[i])
             }
-            // 清空定时器
-            clearInterval(timer);
-            map.removeOverlay(trackobj.point[trackobj.point.length - 1]) // 清除最后一个点
-            // 清空数据
-            trackobj: {
-                strNum = "",
-                point = []
-            }
+            let promise= new Promise((resolve, reject) => {
+                var Polyline = map.getOverlays();
+                for(let i=0;i<Polyline.length;i++){
+                    if(Polyline[i].toString().indexOf("Polyline") > 0){//删除折线
+                        map.removeOverlay(Polyline[i]);
+                    } 
+                    if (Polyline[i].toString() == "[object Polyline]") {
+                        map.removeOverlay(Polyline[i]);
+                    }
+                }
+                resolve()
+            })
+            promise.then(()=>{
+                    // 清空定时器
+                clearInterval(timer);
+                map.removeOverlay(trackobj.point[trackobj.point.length - 1]) // 清除最后一个点
+                var Polyline = map.getOverlays();
+                for(let i=0;i<Polyline.length;i++){
+                    if(Polyline[i].toString().indexOf("Polyline") > 0){//删除折线
+                        map.removeOverlay(Polyline[i]);
+                    } 
+                    if (Polyline[i].toString() == "[object Polyline]") {
+                        map.removeOverlay(Polyline[i]);
+                    }
+                }
+                // 清空数据
+                trackobj.strNum=""
+                trackobj.point=[]
+                trackobj.point.length=0
+                Linearr=[]
+            })
+           
         }
     } else {
+        index==0
         TrackingID = null
+        name=null
+        clearInterval(timer);
+        for (let i = 0; i < Linearr.length; i++) {
+            map.removeOverlay(Linearr[i])
+        }
+
         let promise = new Promise((resolve, reject) => {
             for (let i = 0; i < Linearr.length; i++) {
                 map.removeOverlay(Linearr[i])
             }
+            Linearr=[]
             map.closeInfoWindow(); //关闭信息窗口
             map.removeOverlay(trackobj.point[trackobj.point.length - 1])
             GisTrackingData = null;
-            console.log(trackobj.point[trackobj.point.length - 1])
+            map.closeInfoWindow(); //关闭信息窗口
             resolve()
         })
         promise.then(() => {
@@ -878,15 +1002,16 @@ var Api_MapTracking = function (gis, onOff) {
                 })
                 ptmarkerArr.setLabel(ts);
                 ptmarkerArr.addEventListener("click", () => {
-                    defaultInfoWindow(mardata, markerArr, new BMap.Point(lng, lat));
+                    defaultInfoWindow(mardata, ptmarkerArr, new BMap.Point(lng, lat));
                 });
 
-                function defaultInfoWindow(gis, markerArr, point) {
+                function defaultInfoWindow(gis, ptmarkerArr, point) {
                     let opts = {
                         width: 320, // 信息窗口宽度
                         height: 222, // 信息窗口高度
-                        title: "<h1 title=" + '  ' + gis.strName + ' ' + ">" + gis.strName + '<h2>' + '(' + gis.strNum + ')' + '</h2>' + "</h1>", // 信息窗口标题
+                        title: "<h1 title=" + '  ' + gis.strName + ' ' + ">" + gis.strName  + "</h1>", // 信息窗口标题
                     };
+                 
                             let html = [];
                             // 内层文字
                             html.push('<ul>');
@@ -903,7 +1028,7 @@ var Api_MapTracking = function (gis, onOff) {
                             html.push('<div class="content_left"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all">纬度:</h1> <h2 style="vertical-align:top;">' + gis.strLatitude + ' </h2></div>');
                             html.push('</li>');
                             html.push('<li class="content">');
-                            html.push('<div class="content_left" style="width:100%"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all;width:30%">位置:</h1> <h2 style="vertical-align:top;width:70%;overflow: hidden;text-overflow:ellipsis;white-space: nowrap"  >' + '离线模式无法显示位置信息' + ' </h2></div>');
+                            html.push('<div class="content_left" style="width:100%"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all;width:30%">位置:</h1> <h2 style="vertical-align:top;width:70%;overflow: hidden;text-overflow:ellipsis;white-space: nowrap" >' + '离线模式无法显示位置信息' + ' </h2></div>');
                             html.push('</li>');
                             html.push('<li class="content">');
                             html.push('<div class="content_left" style="width:100%"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all;width:30%">上报时间:</h1> <h2 style="vertical-align:top; width:70%;color:#ff6600;">' + gis.lastDate + ' </h2></div>');
@@ -919,21 +1044,42 @@ var Api_MapTracking = function (gis, onOff) {
                             let infoWindow = new BMap.InfoWindow(html.join(""), opts); // 创建信息窗口对象
                             map.openInfoWindow(infoWindow, point); //自动开启信息窗口
                             map.centerAndZoom(point, 19) //描点自动居中
+                            ptmarkerArr.addEventListener("click", () => {
+                                defaultInfoWindow(mardata, ptmarkerArr, point);
+                            });
                             if (showMarker) {
                                 map.openInfoWindow(infoWindow, point); //开启信息窗口
                                 map.centerAndZoom(point, 19); //描点自动居中
                             }
-                }
+                        }
+                    
+                
                 map.addOverlay(ptmarkerArr);
             })
         })
         trackobj: {
-            strNum = "",
-            point = []
+            strNum="",
+            point=[]
         }
+        Linearr=[]
+        //    layer.alert(JSON.stringify(trackobj))
+        // layer.alert(Linearr)
 
     }
 }
+
+// TODO 结束跟踪
+function cancelMonitor(a, b, c, d) {
+ 
+    if(Trackstate==false){
+        index=0
+        Trackstate=true
+        Api_MapTracking(c, false)
+    }
+}
+
+
+
 
 
 // 超界描点
@@ -1054,29 +1200,6 @@ function Api_RailPoint(newGis, oldGis, clear, RingPointcomeIn) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // 圈选功能绘制
 
 function draw(type) {
@@ -1176,27 +1299,12 @@ var Api_RailDltcoveringstcoverings = function () {
 
 }
 
-// 取消跟踪
-function cancelMonitor(a, b, c, d) {
-    // console.log( c)
-    // console.log(gis)
-    Api_MapTracking(c, false)
-}
 
 
 
 
-// //普通描点
-// $(".normal").click(function () {
-//     Api_TracePoint(newGis, oldGis1, false, showMarker)
-// })
-// $(".normal2").click(function () {
-//     Api_TracePoint(newGis2, oldGis2, false, showMarker)
-// })
-// //SOS描点新
-// $(".NEWSOS").click(function () {
-//     Api_SosTracePoint(SOSnewGis, SOSoldGis, SOSclear) //SOS瞄点测试
-// })
+
+
 // 跟踪
 $(".Track").click(function () {
     Api_MapTracking(gis, onOff)
