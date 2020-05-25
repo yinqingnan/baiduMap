@@ -9,14 +9,14 @@ map.centerAndZoom(point, 13);
 
 
 
-G5BrowserFeatures.GetSystemGis().then(res => {
-    let obj = JSON.parse(res);
-    strLongitude = obj.x
-    strLatitude = obj.y
-    strCityName = obj.CityName
-    var point = new BMap.Point(strLongitude, strLatitude);
-    map.centerAndZoom(point, 13); //地图位置和地图放大等级
-});
+// G5BrowserFeatures.GetSystemGis().then(res => {
+//     let obj = JSON.parse(res);
+//     strLongitude = obj.x
+//     strLatitude = obj.y
+//     strCityName = obj.CityName
+//     var point = new BMap.Point(strLongitude, strLatitude);
+//     map.centerAndZoom(point, 13); //地图位置和地图放大等级
+// });
 
 // 添加比例尺、缩放、平移工具条
 map.enableScrollWheelZoom(); //启动鼠标滚轮缩放地图
@@ -305,47 +305,63 @@ $(".gettrajectory").click(function () {
     var Police = $(".Police").val();
     if(!Police)
     {
-        alert("请输入警员")
+        layer.alert('请输入警员', {title: '提示'})
         return;
     }
     var data = $("#test5").val()
     if(!data)
     {
-        alert("请选择查询时间")
+        layer.alert('请选择查询时间', {title: '提示'})
         return;
     }
     // 判断不为空时将数据传出去
     if (Police != "" && data != "") {
         var arr = data.split("&")
         G5BrowserFeatures.GetMapTrack(Police, arr[0], arr[1]).then(function (res) { //浏览器方法调用开始
+            Reset();
             var obj = JSON.parse(res);
+            var obj= res
             if (obj.success == false) {
                 alert(obj.msg)
             } else {
                 if(obj.data.length<=0)
                 {
-                    alert("未获取到警员轨迹信息")
+                    layer.alert('未获取到警员轨迹信息', {title: '提示'})
                     return;
                 }
-                $(".Reset").click();
                 //获取警员坐标
                 $.each(obj.data, function (i, item) {
                     points.push(new BMap.Point(item.gis_jd, item.gis_wd));
                     pointArr.push(item);
                 });
                 // 创建起点标注
-                map.addOverlay(new BMap.Marker(new BMap.Point(points[0].lng, points[0].lat), {
+                var StartingPoint=new BMap.Marker(new BMap.Point(points[0].lng, points[0].lat), {
                     icon: new BMap.Icon("image/guiji/qidian.png", new BMap.Size(50, 50))
-                }));
+                })
+                map.addOverlay(StartingPoint);
+                map.centerAndZoom(new BMap.Point(points[0].lng, points[0].lat), 16);
                 //提示框
-                map.openInfoWindow(new BMap.InfoWindow(TooltipHtml(pointArr[0]).join(""), {
-                    width: 200,
-                    height: 130
-                }), points[0]);
+                
+                StartingPoint.addEventListener("click", function () {
+                    //开启信息窗口
+                    map.openInfoWindow(new BMap.InfoWindow(TooltipHtml(pointArr[0]).join(""), {
+                        width: 200,
+                        height: 130
+                    }), points[0]);
+                  });
+               
                 // 创建终点标注
-                map.addOverlay(new BMap.Marker(new BMap.Point(points[points.length - 1].lng, points[points.length - 1].lat), {
+                var EndPoint = new BMap.Marker(new BMap.Point(points[points.length - 1].lng, points[points.length - 1].lat), {
                     icon: new BMap.Icon("image/guiji/zhongdian.png", new BMap.Size(50, 50))
-                }));
+                })
+                EndPoint.addEventListener("click", function () {
+                    //开启信息窗口
+                    map.openInfoWindow(new BMap.InfoWindow(TooltipHtml(pointArr[pointArr.length-1]).join(""), {
+                        width: 200,
+                        height: 130
+                    }), points[pointArr.length-1]);
+                  });
+                map.addOverlay(EndPoint);
 
                 //连接所有点
                 map.addOverlay(new BMap.Polyline(points, {
@@ -405,20 +421,25 @@ function play() {
     }
     //绘制新的点
     if (index != 0 && index != (points.length - 1)) {
-        map.addOverlay(new BMap.Marker(point, {
+        var newPoint =new BMap.Marker(point, {
             icon: new BMap.Icon("image/guiji/jc.png", new BMap.Size(50, 50))
-        }));
+        })
+        newPoint.addEventListener("click", function () {
+          //开启信息窗口
+            map.openInfoWindow(new BMap.InfoWindow(TooltipHtml(pointArr[index]).join(""), {
+                width: 200,
+                height: 130
+            }), point);
+        });
+        map.addOverlay(newPoint);
     }
-    //开启信息窗口
-    map.openInfoWindow(new BMap.InfoWindow(TooltipHtml(pointArr[index]).join(""), {
-        width: 200,
-        height: 130
-    }), point);
+    
+    
     //画面跟随
     map.panTo(point);
     index++;
     if (index < points.length) {
-        timer = window.setTimeout("play(" + index + ")", 500);
+        timer = window.setTimeout("play(" + index + ")", 1000);
     } else {
         $(".play").show();
         $(".pause").hide();
@@ -437,7 +458,7 @@ $(".play").click(function () {
         $(".pause").show();
         play();
     } else {
-        alert("请获取警员轨迹")
+        layer.alert('请获取警员轨迹', {title: '提示'})
     }
 });
 
@@ -450,8 +471,7 @@ $(".pause").click(function () {
     }
 });
 
-//重置
-$(".Reset").click(function () {
+function Reset() {
     if (timer) {
         window.clearTimeout(timer);
     }
@@ -465,4 +485,11 @@ $(".Reset").click(function () {
     points = [];
     pointArr = [];
     drawOverlay = [];
+}
+
+//重置
+$(".Reset").click(function () {
+    $(".Police").val('');
+    $("#test5").val('');
+    Reset();
 });

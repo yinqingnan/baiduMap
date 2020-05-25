@@ -319,11 +319,11 @@ var Api_TracePoint = function (newGis, oldGis, clear, showMarker) {
                         normalInfoWindow(newGis, markerArr, point, showMarker);
                     });
 
-                    function normalInfoWindow(res, sosmarker, point, showMarker) {
+                    function normalInfoWindow(newGis, sosmarker, point, showMarker) {
                         let opts = {
                             width: 320, // 信息窗口宽度
                             height: 222, // 信息窗口高度
-                            title: "<h1 title=" + '  ' + gis.strName + ' ' + ">" + gis.strName  + "</h1>", // 信息窗口标题
+                            title: "<h1 title=" + '  ' + newGis.strName + ' ' + ">" + newGis.strName  + "</h1>", // 信息窗口标题
                         };
                     
                                 var html = [];
@@ -410,11 +410,11 @@ var Api_TracePoint = function (newGis, oldGis, clear, showMarker) {
                     
                 });
 
-                function normalInfoWindow(res, sosmarker, point, showMarker) {
+                function normalInfoWindow(newGis, sosmarker, point, showMarker) {
                     let opts = {
                         width: 320, // 信息窗口宽度
                         height: 222, // 信息窗口高度
-                        title: "<h1 title=" + '  ' + gis.strName + ' ' + ">" + gis.strName  + "</h1>", // 信息窗口标题
+                        title: "<h1 title=" + '  ' + newGis.strName + ' ' + ">" + newGis.strName  + "</h1>", // 信息窗口标题
                     };
                   
                             var html = [];
@@ -810,11 +810,11 @@ var Api_MapTracking = function (gis, onOff) {
                 lInfoWindow(gis, trackmarker, point);
             });
 
-            function lInfoWindow(res, trackmarker, point) {
+            function lInfoWindow(gis, trackmarker, point) {
                 let opts = {
                     width: 320, // 信息窗口宽度
                     height: 222, // 信息窗口高度
-                    title: "<h1 title=" + '  ' + newGis.strName + ' ' + ">" + res.strName + '<h2>' + '(' + res.strNum + ')' + '</h2>' + "</h1>", // 信息窗口标题
+                    title: "<h1 title=" + '  ' + gis.strName + ' ' + ">" + gis.strName  + "</h1>", // 信息窗口标题
                 };
                
                         var html = [];
@@ -1058,9 +1058,6 @@ var Api_MapTracking = function (gis, onOff) {
             point=[]
         }
         Linearr=[]
-        //    layer.alert(JSON.stringify(trackobj))
-        // layer.alert(Linearr)
-
     }
 }
 

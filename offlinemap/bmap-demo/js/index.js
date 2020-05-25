@@ -9,17 +9,16 @@ if (typeof map != 'undefined') {
 // var strLongitude = "";
 // var strLatitude = "";
 // var CityName="XXX";
-// // 百度地图API功能
-// // 定义默认的精度，维度
+// 百度地图API功能
+// 定义默认的精度，维度
 // strLongitude = "106.53063501";
 // strLatitude = "29.54460611";
 // var point = new BMap.Point(strLongitude, strLatitude);
-// // console.log(point)
 // map.centerAndZoom(point, 13);   //初始化地图位置和地图放大等级
 
 var strLongitude = "";
 var strLatitude = "";
-var CityName="XXX";
+var CityName="";
 // 百度地图API功能
 // 定义默认的精度，维度
 var point = new BMap.Point(strLongitude, strLatitude);
@@ -40,13 +39,13 @@ G5BrowserFeatures.GetSystemGis().then(res => {
         strLatitude = 39.913828;
         CityName="北京市";
     }
-   
 });
 
 
-
-
-
+$($(".Location")[1]).click(function(){
+    let point = new BMap.Point(strLongitude, strLatitude);
+    map.centerAndZoom(point, 13); //地图位置和地图放大等级
+})
 
 
 
@@ -149,18 +148,95 @@ Str = [
         "Id": "5a05225a-4a53-4de6-8fe6-48a97881f71a",
         "Name": "于谦",
         "Coordinate": "[{\"lng\":106.510,\"lat\":29.550},{\"lng\":106.45992,\"lat\":29.535054},{\"lng\":106.39783,\"lat\":29.506642}]"
+    },
+    {
+        "Id": "5a05225a-4a53-4de6-8fe6-48a97881f71a",
+        "Name": "杨九郎",
+        "Coordinate": "[{\"lng\":106.510,\"lat\":29.550},{\"lng\":106.45992,\"lat\":29.535054},{\"lng\":106.39783,\"lat\":29.506642}]"
+    },
+    {
+        "Id": "5a05225a-4a53-4de6-8fe6-48a97881f71a",
+        "Name": "于谦",
+        "Coordinate": "[{\"lng\":106.510,\"lat\":29.550},{\"lng\":106.45992,\"lat\":29.535054},{\"lng\":106.39783,\"lat\":29.506642}]"
+    },
+    {
+        "Id": "5a05225a-4a53-4de6-8fe6-48a97881f71a",
+        "Name": "杨九郎",
+        "Coordinate": "[{\"lng\":106.510,\"lat\":29.550},{\"lng\":106.45992,\"lat\":29.535054},{\"lng\":106.39783,\"lat\":29.506642}]"
+    },
+    {
+        "Id": "5a05225a-4a53-4de6-8fe6-48a97881f71a",
+        "Name": "于谦",
+        "Coordinate": "[{\"lng\":106.510,\"lat\":29.550},{\"lng\":106.45992,\"lat\":29.535054},{\"lng\":106.39783,\"lat\":29.506642}]"
+    },
+    {
+        "Id": "5a05225a-4a53-4de6-8fe6-48a97881f71a",
+        "Name": "杨九郎",
+        "Coordinate": "[{\"lng\":106.510,\"lat\":29.550},{\"lng\":106.45992,\"lat\":29.535054},{\"lng\":106.39783,\"lat\":29.506642}]"
     }
 ]
+
+
+$(".search").click(()=>{
+    console.log($("#suggestId").val())
+    let str = $("#suggestId").val()
+    $(".nameList").empty()
+    G5BrowserFeatures.GetGisAreaList(str).then(res => {
+         var Str = JSON.parse(res);
+         for (var i in Str) {
+            $(".nameList").append($("<li class='Listbtn'></li>").text(Str[i].Name))
+        }
+        $(".Listbtn").click(function () {
+            var index = $(".nameList li").index(this);
+            var data = Str[index];
+            map.clearOverlays(polygon);
+            var str = JSON.parse(data.Coordinate);
+            var Zoomlevel = JSON.parse(data.ZoomLevel);
+            var arr = [];
+            for (let item in str) {
+                arr.push(new BMap.Point(str[item].lng, str[item].lat))
+            }
+            var polygon = new BMap.Polygon(arr, {
+                strokeColor: "blue",
+                strokeWeight: 2,
+                strokeOpacity: 1,
+                fillColor: "", //填充颜色。当参数为空时，圆形将没有填充效果。
+            }); //创建多边形
+            Coverings = polygon
+            var x = 0;
+            var y = 0;
+            for (var k = 0; k < str.length; k++) {
+                x = x + parseFloat(str[k].lng);
+                y = y + parseFloat(str[k].lat);
+            }
+            x = x / arr.length;
+            y = y / arr.length;
+            var posi = new BMap.Point(x, y);
+            // 覆盖物居中
+            map.centerAndZoom(posi, Zoomlevel); //描点自动居中
+            map.addOverlay(polygon); //添加覆盖物
+            setTimeout(() => {
+                map.clearOverlays(polygon);
+            }, 5000);
+        })
+    })
+})
 var ii = 0;
 $(".menuone").click(function (e) {
+    $("#suggestId").val('')
     $(".nameList").empty() //每一次都优先清空一次所有子集
-    G5BrowserFeatures.GetGisAreaList().then(res => {
-        if (res != "") {
-            var Str = JSON.parse(res);
+    // G5BrowserFeatures.GetGisAreaList().then(res => {
+        // if (res != "") {
+            // var Str = JSON.parse(res);
             for (var i in Str) {
+                if(i<=11){
+                    $(".nameList").append($("<li class='Listbtn'></li>").text(Str[i].Name))
 
-                $(".nameList").append($("<li class='Listbtn'></li>").text(Str[i].Name))
+                }
             }
+            // for(let i=0;i<11;i++){
+                // $(".nameList").append($("<li class='Listbtn'></li>").text(Str[i].Name))
+            // }
             $(".Listbtn").click(function () {
                 var index = $(".nameList li").index(this);
                 var data = Str[index];
@@ -194,8 +270,8 @@ $(".menuone").click(function (e) {
                     map.clearOverlays(polygon);
                 }, 5000);
             })
-        }
-    });
+        // }
+    // });
     ii++;
     if (ii % 2 == 1) {
         $(".tc").show();

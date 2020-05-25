@@ -693,3 +693,8 @@ body, html, #allmap {
     /* text-decoration: underline; */
 
 }
+
+
+.BMapLabel{
+    display: none !important;
+}

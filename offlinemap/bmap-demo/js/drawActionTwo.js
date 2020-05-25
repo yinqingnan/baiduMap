@@ -188,7 +188,7 @@ var overlaycomplete = function (e, num) {
         //  console.log(polygonArray)
         var Str = JSON.stringify(polygonArray)
         //清空
-        map.clearOverlays(polygonArray);
+        map.removeOverlay(polygon1)
         // 双击完成绘制后弹出框Save_area
         G5BrowserFeatures.CreateGisArea(Str, map.getZoom());
     }

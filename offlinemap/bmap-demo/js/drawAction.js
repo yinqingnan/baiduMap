@@ -189,11 +189,8 @@ var overlaycomplete = function (e,num) {
         viewDraw(4, polygonArray.length);
         var Str = JSON.stringify(polygonArray)
         //  外部浏览器接口
-        G5BrowserFeatures.CreateElectricfence(Str).then(res=>{
-            if(res){
-                map.removeOverlay(polygon1);
-            }
-        })
+        map.removeOverlay(polygon1);
+        G5BrowserFeatures.CreateElectricfence(Str)
 
     }
 };
