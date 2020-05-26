@@ -14,7 +14,7 @@ if (typeof map != 'undefined') {
 // strLongitude = "106.53063501";
 // strLatitude = "29.54460611";
 // var point = new BMap.Point(strLongitude, strLatitude);
-// map.centerAndZoom(point, 13);   //初始化地图位置和地图放大等级
+// map.centerAndZoom(point, 13);                            //初始化地图位置和地图放大等级
 
 
 

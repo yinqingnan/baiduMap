@@ -105,12 +105,12 @@ function Track(a, b, c, d) {
                             map.removeOverlay(allOverlay[i]);
                         }
                     }
-                    Trackstate=false
-                    G5BrowserFeatures.Track(JSON.stringify(obj));
+                 
                 }
                 
             }
-            
+            Trackstate=false
+            G5BrowserFeatures.Track(JSON.stringify(obj));
     
         })
     }else{
