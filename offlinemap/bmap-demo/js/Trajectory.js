@@ -1,22 +1,22 @@
 // 定义默认的精度，维度
-var strLongitude = "106.53063501"
-var strLatitude = "29.54460611"
+// var strLongitude = "106.53063501"
+// var strLatitude = "29.54460611"
+// var map = new BMap.Map("allmap");
+// var point = new BMap.Point(strLongitude, strLatitude);
+// map.centerAndZoom(point, 13);
 
 
-var map = new BMap.Map("allmap");
-var point = new BMap.Point(strLongitude, strLatitude);
-map.centerAndZoom(point, 13);
-
-
-
-// G5BrowserFeatures.GetSystemGis().then(res => {
-//     let obj = JSON.parse(res);
-//     strLongitude = obj.x
-//     strLatitude = obj.y
-//     strCityName = obj.CityName
-//     var point = new BMap.Point(strLongitude, strLatitude);
-//     map.centerAndZoom(point, 13); //地图位置和地图放大等级
-// });
+var strLongitude = "";
+var strLatitude = "";
+var strCityName=""
+G5BrowserFeatures.GetSystemGis().then(res => {
+    let obj = JSON.parse(res);
+    strLongitude = obj.x
+    strLatitude = obj.y
+    strCityName = obj.CityName
+    var point = new BMap.Point(strLongitude, strLatitude);
+    map.centerAndZoom(point, 13); //地图位置和地图放大等级
+});
 
 // 添加比例尺、缩放、平移工具条
 map.enableScrollWheelZoom(); //启动鼠标滚轮缩放地图

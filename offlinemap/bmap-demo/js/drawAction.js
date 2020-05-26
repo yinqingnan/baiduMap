@@ -133,7 +133,7 @@ var drawingManagerEntity = function () {
 
         //打开面积计算
         openCalculate: function () {
-            drawingManager.enableCalculate();
+            // drawingManager.enableCalculate();
         },
         //关闭面积计算
         closeCalculate: function () {

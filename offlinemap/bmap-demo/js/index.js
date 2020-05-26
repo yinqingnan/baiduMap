@@ -9,21 +9,21 @@ if (typeof map != 'undefined') {
 // var strLongitude = "";
 // var strLatitude = "";
 // var CityName="XXX";
-// 百度地图API功能
-// 定义默认的精度，维度
+// // 百度地图API功能
+// // 定义默认的精度，维度
 // strLongitude = "106.53063501";
 // strLatitude = "29.54460611";
 // var point = new BMap.Point(strLongitude, strLatitude);
 // map.centerAndZoom(point, 13);   //初始化地图位置和地图放大等级
 
+
+
+
 var strLongitude = "";
 var strLatitude = "";
 var CityName="";
-// 百度地图API功能
-// 定义默认的精度，维度
 var point = new BMap.Point(strLongitude, strLatitude);
 map.centerAndZoom(point, 13);   //初始化地图位置和地图放大等级
-
 G5BrowserFeatures.GetSystemGis().then(res => {
     if (res != "" && res != null && res != undefined) {
         let obj = JSON.parse(res);
@@ -175,21 +175,25 @@ Str = [
         "Coordinate": "[{\"lng\":106.510,\"lat\":29.550},{\"lng\":106.45992,\"lat\":29.535054},{\"lng\":106.39783,\"lat\":29.506642}]"
     }
 ]
-
+// 全局覆盖物
+var ii = 0
+var Coverings = null
 
 $(".search").click(()=>{
-    console.log($("#suggestId").val())
     let str = $("#suggestId").val()
     $(".nameList").empty()
     G5BrowserFeatures.GetGisAreaList(str).then(res => {
          var Str = JSON.parse(res);
          for (var i in Str) {
             $(".nameList").append($("<li class='Listbtn'></li>").text(Str[i].Name))
+            for (let i = 0; i < $(".Listbtn").length; i++) {
+                $($(".Listbtn")[i]).attr('title', Str[i].Name)
+            }
         }
         $(".Listbtn").click(function () {
             var index = $(".nameList li").index(this);
             var data = Str[index];
-            map.clearOverlays(polygon);
+            map.removeOverlay(polygon);
             var str = JSON.parse(data.Coordinate);
             var Zoomlevel = JSON.parse(data.ZoomLevel);
             var arr = [];
@@ -216,7 +220,7 @@ $(".search").click(()=>{
             map.centerAndZoom(posi, Zoomlevel); //描点自动居中
             map.addOverlay(polygon); //添加覆盖物
             setTimeout(() => {
-                map.clearOverlays(polygon);
+                map.removeOverlay(polygon);
             }, 5000);
         })
     })
@@ -225,22 +229,21 @@ var ii = 0;
 $(".menuone").click(function (e) {
     $("#suggestId").val('')
     $(".nameList").empty() //每一次都优先清空一次所有子集
-    // G5BrowserFeatures.GetGisAreaList().then(res => {
-        // if (res != "") {
-            // var Str = JSON.parse(res);
+    G5BrowserFeatures.GetGisAreaList("").then(res => {
+        if (res != "") {
+            var Str = JSON.parse(res);
             for (var i in Str) {
                 if(i<=11){
                     $(".nameList").append($("<li class='Listbtn'></li>").text(Str[i].Name))
-
+                    for (let i = 0; i < $(".Listbtn").length; i++) {
+                        $($(".Listbtn")[i]).attr('title', Str[i].Name)
+                    }
                 }
             }
-            // for(let i=0;i<11;i++){
-                // $(".nameList").append($("<li class='Listbtn'></li>").text(Str[i].Name))
-            // }
             $(".Listbtn").click(function () {
                 var index = $(".nameList li").index(this);
                 var data = Str[index];
-                map.clearOverlays(polygon);
+                map.removeOverlay(polygon);
                 var str = JSON.parse(data.Coordinate);
                 var Zoomlevel = JSON.parse(data.ZoomLevel);
                 var arr = [];
@@ -267,11 +270,11 @@ $(".menuone").click(function (e) {
                 map.centerAndZoom(posi, Zoomlevel); //描点自动居中
                 map.addOverlay(polygon); //添加覆盖物
                 setTimeout(() => {
-                    map.clearOverlays(polygon);
+                    map.removeOverlay(polygon);
                 }, 5000);
             })
-        // }
-    // });
+        }
+    });
     ii++;
     if (ii % 2 == 1) {
         $(".tc").show();
@@ -346,10 +349,14 @@ function stopPropagation(e) {
     }
 }
 
+// 电子围栏管理
 function Administration() {
     G5BrowserFeatures.ShowElectricfence()
 }
-
+// 区域管理
+function ShowGisAreaMgtList() {
+    G5BrowserFeatures.ShowGisAreaMgtList();
+}
 // 关闭工具栏区域弹窗
 $(".Save_area_header>h2").click(() => {
     $(".Save_area").hide();
