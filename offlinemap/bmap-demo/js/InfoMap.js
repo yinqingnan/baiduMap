@@ -1,29 +1,32 @@
-
 const map = new BMap.Map("allmap");
 if (typeof map != 'undefined') {
     map.addEventListener("zoomend", function (e) {
-        layer.msg('地图级别: ' + map.getZoom() + (map.getZoom() > 14 ? ', 示例中只有15级地图,超过的无法显示!' : ''), {'offset': 'b'});
+        layer.msg('地图级别: ' + map.getZoom() + (map.getZoom() > 14 ? ', 示例中只有15级地图,超过的无法显示!' : ''), {
+            'offset': 'b'
+        });
     });
 }
 
-// var strLongitude = "";
-// var strLatitude = "";
+var strLongitude = "";
+var strLatitude = "";
 // var CityName="XXX";
 // // 百度地图API功能
 // // 定义默认的精度，维度
 // strLongitude = "106.53063501";
 // strLatitude = "29.54460611";
+// var CityName = "重庆市";
+
 // var point = new BMap.Point(strLongitude, strLatitude);
-// map.centerAndZoom(point, 13);                            //初始化地图位置和地图放大等级
+// map.centerAndZoom(point, 13); //初始化地图位置和地图放大等级
 
 
 
 
 var strLongitude = "";
 var strLatitude = "";
-var CityName="";
+var CityName = "";
 var point = new BMap.Point(strLongitude, strLatitude);
-map.centerAndZoom(point, 13);   //初始化地图位置和地图放大等级
+map.centerAndZoom(point, 13); //初始化地图位置和地图放大等级
 G5BrowserFeatures.GetSystemGis().then(res => {
     if (res != "" && res != null && res != undefined) {
         let obj = JSON.parse(res);
@@ -34,15 +37,19 @@ G5BrowserFeatures.GetSystemGis().then(res => {
         map.centerAndZoom(point, 13); //地图位置和地图放大等级
         $(".Location")[0].innerHTML = strCityName;
         $(".Location")[1].innerHTML = strCityName;
-    }else{
+    } else {
         strLongitude = 116.405994;
         strLatitude = 39.913828;
-        CityName="北京市";
+        CityName = "北京市";
+        var point = new BMap.Point(strLongitude, strLatitude);
+        map.centerAndZoom(point, 13); //地图位置和地图放大等级
+        $(".Location")[0].innerHTML = strCityName;
+        $(".Location")[1].innerHTML = strCityName;
     }
 });
 
 
-$($(".Location")[1]).click(function(){
+$($(".Location")[1]).click(function () {
     let point = new BMap.Point(strLongitude, strLatitude);
     map.centerAndZoom(point, 13); //地图位置和地图放大等级
 })
@@ -51,7 +58,6 @@ $($(".Location")[1]).click(function(){
 
 // 添加比例尺、缩放、平移工具条
 map.enableScrollWheelZoom(); //启动鼠标滚轮缩放地图
-
 // map.addControl(new BMap.MapTypeControl());          //添加地图类型控件
 var top_left_control = new BMap.ScaleControl({
     anchor: BMAP_ANCHOR_BOTTOM_RIGHT
@@ -92,7 +98,6 @@ map.addEventListener("tilesloaded", function () {
 $(".close")[0].onclick = () => {
     $(".module").hide();
 };
-
 // 定义清除地图上所有覆盖物的方法
 function clearAll() {
     //清空覆盖物数组与地图上的覆盖物
@@ -104,87 +109,25 @@ function clearAll() {
     }
 }
 var Str = null;
-
 //TODO 模拟数据
-Str = [
-    {
-        "Id": "5a05225a-4a53-4de6-8fe6-48a97881f71a",
-        "Name": "郭德纲",
-        "Coordinate": "[{\"lng\":106.423701,\"lat\":29.557174},{\"lng\":106.45992,\"lat\":29.535054},{\"lng\":106.39783,\"lat\":29.506642}]"
-    }, {
-        "Id": "5a05225a-4a53-4de6-8fe6-48a97881f71a",
-        "Name": "郭麒麟",
-        "Coordinate": "[{\"lng\":106.430,\"lat\":29.542},{\"lng\":106.45992,\"lat\":29.535054},{\"lng\":106.39783,\"lat\":29.506642}]"
-    }, {
-        "Id": "5a05225a-4a53-4de6-8fe6-48a97881f71a",
-        "Name": "岳云鹏",
-        "Coordinate": "[{\"lng\":106.440,\"lat\":29.543},{\"lng\":106.45992,\"lat\":29.535054},{\"lng\":106.39783,\"lat\":29.506642}]"
-    }, {
-        "Id": "5a05225a-4a53-4de6-8fe6-48a97881f71a",
-        "Name": "阎鹤祥",
-        "Coordinate": "[{\"lng\":106.450,\"lat\":29.544},{\"lng\":106.45992,\"lat\":29.535054},{\"lng\":106.39783,\"lat\":29.506642}]"
-    }, {
-        "Id": "5a05225a-4a53-4de6-8fe6-48a97881f71a",
-        "Name": "郭美美",
-        "Coordinate": "[{\"lng\":106.460,\"lat\":29.545},{\"lng\":106.45992,\"lat\":29.535054},{\"lng\":106.39783,\"lat\":29.506642}]"
-    }, {
-        "Id": "5a05225a-4a53-4de6-8fe6-48a97881f71a",
-        "Name": "张鹤伦",
-        "Coordinate": "[{\"lng\":106.470,\"lat\":29.546},{\"lng\":106.45992,\"lat\":29.535054},{\"lng\":106.39783,\"lat\":29.506642}]"
-    }, {
-        "Id": "5a05225a-4a53-4de6-8fe6-48a97881f71a",
-        "Name": "郎鹤炎",
-        "Coordinate": "[{\"lng\":106.480,\"lat\":29.547},{\"lng\":106.45992,\"lat\":29.535054},{\"lng\":106.39783,\"lat\":29.506642}]"
-    }, {
-        "Id": "5a05225a-4a53-4de6-8fe6-48a97881f71a",
-        "Name": "张云雷",
-        "Coordinate": "[{\"lng\":106.490,\"lat\":29.548},{\"lng\":106.45992,\"lat\":29.535054},{\"lng\":106.39783,\"lat\":29.506642}]"
-    }, {
-        "Id": "5a05225a-4a53-4de6-8fe6-48a97881f71a",
-        "Name": "杨九郎",
-        "Coordinate": "[{\"lng\":106.500,\"lat\":29.549},{\"lng\":106.45992,\"lat\":29.535054},{\"lng\":106.39783,\"lat\":29.506642}]"
-    },
-    {
-        "Id": "5a05225a-4a53-4de6-8fe6-48a97881f71a",
-        "Name": "于谦",
-        "Coordinate": "[{\"lng\":106.510,\"lat\":29.550},{\"lng\":106.45992,\"lat\":29.535054},{\"lng\":106.39783,\"lat\":29.506642}]"
-    },
-    {
-        "Id": "5a05225a-4a53-4de6-8fe6-48a97881f71a",
-        "Name": "杨九郎",
-        "Coordinate": "[{\"lng\":106.510,\"lat\":29.550},{\"lng\":106.45992,\"lat\":29.535054},{\"lng\":106.39783,\"lat\":29.506642}]"
-    },
-    {
-        "Id": "5a05225a-4a53-4de6-8fe6-48a97881f71a",
-        "Name": "于谦",
-        "Coordinate": "[{\"lng\":106.510,\"lat\":29.550},{\"lng\":106.45992,\"lat\":29.535054},{\"lng\":106.39783,\"lat\":29.506642}]"
-    },
-    {
-        "Id": "5a05225a-4a53-4de6-8fe6-48a97881f71a",
-        "Name": "杨九郎",
-        "Coordinate": "[{\"lng\":106.510,\"lat\":29.550},{\"lng\":106.45992,\"lat\":29.535054},{\"lng\":106.39783,\"lat\":29.506642}]"
-    },
-    {
-        "Id": "5a05225a-4a53-4de6-8fe6-48a97881f71a",
-        "Name": "于谦",
-        "Coordinate": "[{\"lng\":106.510,\"lat\":29.550},{\"lng\":106.45992,\"lat\":29.535054},{\"lng\":106.39783,\"lat\":29.506642}]"
-    },
-    {
-        "Id": "5a05225a-4a53-4de6-8fe6-48a97881f71a",
-        "Name": "杨九郎",
-        "Coordinate": "[{\"lng\":106.510,\"lat\":29.550},{\"lng\":106.45992,\"lat\":29.535054},{\"lng\":106.39783,\"lat\":29.506642}]"
-    }
-]
+Str = [{
+    "Id": "5a05225a-4a53-4de6-8fe6-48a97881f71a",
+    "Name": "郭德纲",
+    "Coordinate": "[{\"lng\":106.423701,\"lat\":29.557174},{\"lng\":106.45992,\"lat\":29.535054},{\"lng\":106.39783,\"lat\":29.506642}]"
+}, {
+    "Id": "5a05225a-4a53-4de6-8fe6-48a97881f71a",
+    "Name": "郭麒麟",
+    "Coordinate": "[{\"lng\":106.430,\"lat\":29.542},{\"lng\":106.45992,\"lat\":29.535054},{\"lng\":106.39783,\"lat\":29.506642}]"
+}]
 // 全局覆盖物
 var ii = 0
 var Coverings = null
-
-$(".search").click(()=>{
+$(".search").click(() => {
     let str = $("#suggestId").val()
     $(".nameList").empty()
     G5BrowserFeatures.GetGisAreaList(str).then(res => {
-         var Str = JSON.parse(res);
-         for (var i in Str) {
+        var Str = JSON.parse(res);
+        for (var i in Str) {
             $(".nameList").append($("<li class='Listbtn'></li>").text(Str[i].Name))
             for (let i = 0; i < $(".Listbtn").length; i++) {
                 $($(".Listbtn")[i]).attr('title', Str[i].Name)
@@ -233,7 +176,7 @@ $(".menuone").click(function (e) {
         if (res != "") {
             var Str = JSON.parse(res);
             for (var i in Str) {
-                if(i<=11){
+                if (i <= 11) {
                     $(".nameList").append($("<li class='Listbtn'></li>").text(Str[i].Name))
                     for (let i = 0; i < $(".Listbtn").length; i++) {
                         $($(".Listbtn")[i]).attr('title', Str[i].Name)
@@ -287,10 +230,8 @@ $(".menuone").click(function (e) {
     ii = 0;
     Enclosurenum = 0;
     Toolnum = 0;
-
     stopPropagation(e);
 });
-
 //  给所有元素绑定事件
 $(document).bind('click', function () {
     $(".tc").hide();
@@ -299,13 +240,10 @@ $(document).bind('click', function () {
     ii = 0
     Enclosurenum = 0
     Toolnum = 0
-
 });
 $(".tc").click(function (e) {
     stopPropagation(e);
-
 });
-
 var Enclosurenum = 0;
 $($(".menu>ul>li")[2]).click((e) => {
     Enclosurenum++;
@@ -314,9 +252,8 @@ $($(".menu>ul>li")[2]).click((e) => {
         $(".Tool").hide();
     } else {
         $(".Enclosure").hide();
-
     }
-    $(".tc").hide();     //关闭模态框
+    $(".tc").hide(); //关闭模态框
     ii = 0;
     Enclosurenum = 0;
     Toolnum = 0;
@@ -328,27 +265,24 @@ $($(".menu>ul>li")[3]).click((e) => {
     if (Toolnum % 2 == 1) {
         $(".Enclosure").hide()
         $(".Tool").show()
-
     } else {
         $(".Tool").hide()
     }
-    $(".tc").hide()     //关闭模态框
+    $(".tc").hide() //关闭模态框
     ii = 0
     Enclosurenum = 0
     Toolnum = 0
     stopPropagation(e);
 })
-
 // 阻止冒泡功能
 function stopPropagation(e) {
     var ev = e || window.event;
     if (ev.stopPropagation) {
         ev.stopPropagation();
     } else if (window.event) {
-        window.event.cancelBubble = true;//兼容IE
+        window.event.cancelBubble = true; //兼容IE
     }
 }
-
 // 电子围栏管理
 function Administration() {
     G5BrowserFeatures.ShowElectricfence()
@@ -364,16 +298,39 @@ $(".Save_area_header>h2").click(() => {
     map.clearOverlays();
 
 })
-// 工具栏区域取消按钮
-$($('.Save_area_footer>button')[0]).click((e) => {
-    $(".Save_area").hide();
-    clearAll();
-    map.clearOverlays();
-})
-$('.Save_area_body>div>div>input').focus(() => {
-    $('.Save_area_body>div>div>input').attr('placeholder', "");
-})
-
-
-
-
+// 绘制保存的覆盖物（区域管理）
+var Api_RailDrawcoverings = function (res) {
+    Api_RailDltcoverings();
+    let arr = [];
+    let str = JSON.parse(res);
+    for (let item in str) {
+        arr.push(new BMap.Point(str[item].lng, str[item].lat));
+    }
+    var dbx = new BMap.Polygon(arr, {
+        strokeColor: "red",
+        strokeWeight: 2,
+        strokeOpacity: 0.5,
+        fillColor: "",
+    }); //创建多边形
+    let x = 0;
+    let y = 0;
+    for (let k = 0; k < str.length; k++) {
+        x = x + parseFloat(str[k].lng);
+        y = y + parseFloat(str[k].lat);
+    }
+    x = x / arr.length;
+    y = y / arr.length;
+    let dw = new BMap.Point(x, y);
+    let el = map.getZoom() //获取到当前界面缩放等级
+    map.centerAndZoom(dw, el);
+    map.addOverlay(dbx); //添加覆盖物  
+}
+// 删除多边形覆盖物（区域管理）
+var Api_RailDltcoverings = function () {
+    let allOverlay = map.getOverlays();
+    for (let i = 0; i < allOverlay.length; i++) {
+        if (allOverlay[i].toString() == "[object Polygon]") {
+            map.removeOverlay(allOverlay[i]);
+        }
+    }
+};

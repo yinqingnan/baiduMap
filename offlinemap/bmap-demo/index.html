@@ -25,9 +25,11 @@
     <button class="BMapLib_box" onclick="sosaddMarker()">SOS</button> -->
     <!-- <button class="BMapLib_box normal">普通描点</button>
     <button class="BMapLib_box NEWSOS">SOS描点</button>
+    <button class="BMapLib_box NEWSOS1">SOS描点</button>
     <button class="BMapLib_box RingPoint">超界描点</button>
-    <button class="BMapLib_box Track">跟踪描点</button>
+    <button class="BMapLib_box Tracks">跟踪描点</button>
     <button class="BMapLib_box load">刷新</button> -->
+    <!-- 192.168.10.39 -->
 </div>
 <div class="menu">
     <ul>
@@ -91,14 +93,14 @@
 <!-- 电子围栏弹出层 -->
 <div class="Enclosure">
     <ul>
-        <li onclick="openDraw(5)">创建</li>
+        <li onclick="DrawPOLYGON(BMAP_DRAWING_POLYGON,'Enclosure')">创建</li>
         <li onclick="Administration()">管理</li>
     </ul>
 </div>
 <!-- 工具弹出层 -->
 <div class="Tool">
     <ul>
-        <li onclick="openDrawtwo(5)">绘制区域</li>
+        <li onclick="DrawPOLYGON(BMAP_DRAWING_POLYGON,'Tool')">绘制区域</li>
         <li onclick="ShowGisAreaMgtList()">区域管理</li>
         <li onclick="myDis.open()">测距</li>
     </ul>
@@ -131,16 +133,20 @@
 
 </body>
 </html>
-<script src="./js/index.js"></script>
+<script src="./js/InfoMap.js"></script>
 
 
 <!--加载鼠标绘制工具-->
 <script type="text/javascript" src="baiduMapAPI/DrawingManager_min.js"></script>
 <link rel="stylesheet" href="baiduMapAPI/DrawingManager_min.css" />
 
-<!--鼠标绘制操作实例-->
-<script src="js/drawAction.js" type="text/javascript"></script>
-<script src="js/drawActionTwo.js" type="text/javascript"></script>
+<!-- 鼠标绘制操作实例 -->
+<!-- <script src="js/drawAction.js" type="text/javascript"></script> -->
+<!-- <script src="js/drawActionTwo.js" type="text/javascript"></script> -->
+
+<!-- 绘制实例 -->
+<script src="./js/AreaDrawing.js"></script>
+
 
 <!--加载鼠标测距-->
 <script type="text/javascript" src="baiduMapAPI/DistanceTool_min.js"></script>
@@ -154,4 +160,8 @@
 <script src="js/geoAction.js"></script>
 <script src="js/demoAction.js" type="text/javascript"></script>
 
+<!-- todo圈选功能 -->
+<script src="./js/CircleDraw.js"></script>
+<!-- TODO 地图SOS报警标注marker -->
+<script src="./js/SOS_Prompt.js" type="text/javascript"></script>
 

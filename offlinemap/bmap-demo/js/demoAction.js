@@ -1,15 +1,9 @@
-var points = [];
-var userinfoAry = [];
-var userinfoIndex = 0;
-
-
-
 
 // TODO跟踪状态全局
 var Trackstate=true
-
-function All_clear() {
-    clear()
+// 警员不在线修改跟踪状态
+function ChangeStatus(){
+    Trackstate=true
 }
 
 //删除所有点
@@ -17,15 +11,6 @@ function clear() {
     map.clearOverlays();
 }
 
-
-var styleOptions = {
-    strokeColor: "blue", //边线颜色。
-    fillColor: "blue", //填充颜色。当参数为空时，圆形将没有填充效果。
-    strokeWeight: 3, //边线的宽度，以像素为单位。
-    strokeOpacity: 0.8, //边线透明度，取值范围0 - 1。
-    fillOpacity: 0.2, //填充的透明度，取值范围0 - 1。
-    strokeStyle: 'solid' //边线的样式，solid或dashed。
-}
 // 语音
 function Voice(a, b, c, d) {
     let obj = {
@@ -73,23 +58,26 @@ function Track(a, b, c, d) {
             strNum: c,
             strName: d
         };
-        map.closeInfoWindow(); //关闭信息窗口
-        let line=map.getOverlays()
-        for(let i=0;i<line.length;i++){
-            if(line[i].toString().indexOf("Polyline") > 0){//删除折线
+          map.closeInfoWindow(); //关闭信息窗口
+        var line = map.getOverlays()
+        for (var i = 0; i < line.length; i++) {
+            if (line[i].toString().indexOf("Polyline") > 0) { //删除折线
                 map.removeOverlay(line[i]);
             }
         }
-     
         let promise= new Promise((resolve, reject) => {
-            let allOverlay = map.getOverlays();
+            var allOverlay = map.getOverlays();
             for (let i = 0; i < allOverlay.length - 1; i++) {
                 if (allOverlay[i] instanceof BMap.Marker) {
                     if (allOverlay[i].getPosition().lng == a && allOverlay[i].getPosition().lat == b) {
-                        // console.log(allOverlay[i].getPosition().lng,allOverlay[i].getPosition().lat)
                         setTimeout(() => {
                             map.removeOverlay(allOverlay[i]); //删除指定坐标
-                        }, 500);
+                        }, 100);
+                    }
+                    if (allOverlay[i].getLabel() != null) {
+                        if (allOverlay[i].getLabel().content == c) { //通过id删除
+                            map.removeOverlay(allOverlay[i]);
+                        }
                     }
                 }
                 resolve()
@@ -97,25 +85,25 @@ function Track(a, b, c, d) {
         })
         promise.then(()=>{
             let allOverlay = map.getOverlays();
-            for(let i=0;i<allOverlay.length;i++){
+            for (let i = 0; i < allOverlay.length; i++) {
                 if (allOverlay[i] instanceof BMap.Marker) {
-                    if(allOverlay[i].getLabel() != null) { //通过id删除
-                        console.log(allOverlay[i].getLabel().content)
-                        if (allOverlay[i].getLabel().content == c) {
+                    if (allOverlay[i].getLabel() != null) {
+                        if (allOverlay[i].getLabel().content == c) { //通过id删除
                             map.removeOverlay(allOverlay[i]);
                         }
                     }
-                 
+                    if (allOverlay[i].getPosition().lng == a && allOverlay[i].getPosition().lat == b) {
+                        setTimeout(() => {
+                            map.removeOverlay(allOverlay[i]); //删除指定坐标
+                        }, 100);
+                    }
                 }
-                
             }
-            Trackstate=false
+            Trackstate = false
             G5BrowserFeatures.Track(JSON.stringify(obj));
-    
         })
     }else{
-        // layer.alert("请先结束当前跟踪状态")
-        layer.msg('请先结束当前对警员：'+c +"  的跟踪状态", {icon: 2});
+        layer.msg('请先结束当前跟踪状态后再操作', {icon: 2});
     }
  
  
@@ -144,22 +132,6 @@ function Notice(a, b, c, d) {
     };
     G5BrowserFeatures.MessageNotification(JSON.stringify(obj));
 }
-
-
-//实例化鼠标绘制工具
-var myDrawingManagerObject = new BMapLib.DrawingManager(map, {
-    isOpen: false, //是否开启绘制模式
-    enableDrawingTool: false, //是否显示工具栏
-    drawingToolOptions: {
-        anchor: BMAP_ANCHOR_TOP_RIGHT, //位置
-        offset: new BMap.Size(5, 5), //偏离值
-    },
-    circleOptions: styleOptions, //圆的样式
-    polylineOptions: styleOptions, //线的样式
-    polygonOptions: styleOptions, //多边形的样式
-    rectangleOptions: styleOptions //矩形的样式
-});
-
 
 // TODO 普通描点模拟数据
 var newGis = {
@@ -314,6 +286,14 @@ var Api_TracePoint = function (newGis, oldGis, clear, showMarker) {
                     var markerArr = new BMap.Marker(point, {
                         icon: myIcon
                     });
+                    var label = new BMap.Label(newGis.strNum, {
+                        offset: new BMap.Size(20, -10)
+                    }); //新建声明label对象
+                    label.setStyle({
+                        display: "none"
+                    })
+
+                    markerArr.setLabel(label);
                     map.addOverlay(markerArr); //将标注添加到地图中
                     markerArr.addEventListener("click", function (e) {
                         normalInfoWindow(newGis, markerArr, point, showMarker);
@@ -459,8 +439,6 @@ var Api_TracePoint = function (newGis, oldGis, clear, showMarker) {
                                 map.openInfoWindow(infoWindow, point); //开启信息窗口
                                 map.centerAndZoom(point, 19); //描点自动居中
                             }
-                            // map.openInfoWindow(infoWindow, point); //自动开启信息窗口
-                            // map.centerAndZoom(point, 19) //描点自动居中
                  
                 }
                 normalInfoWindow(newGis, markerArr, point, showMarker)
@@ -470,284 +448,6 @@ var Api_TracePoint = function (newGis, oldGis, clear, showMarker) {
 }
 
 
-
-
-//  SOS描点模拟数据
-var SOSnewGis = {
-    strLongitude: "  106.552",
-    strLatitude: "29.554666",
-    strNum: "735106",
-    strName: "张三",
-    strPosition: "所长",
-    strMobileNum: "18111184268",
-    strHomeNum: 4247488,
-    strCompanyNum: 4247488,
-    lastDate: "2019年12月23日16:41:05",
-    state: 0,
-    label: 0,
-    CallLine: 123,
-}
-var SOSoldGis = {
-    // strLongitude: " 106.520",
-    // strLatitude: "29.540",
-    // strNum: "123465789",
-    // strName: "张三",
-    // strPosition: "所长",
-    // strMobileNum: "18111184268",
-    // strHomeNum: 4247488,
-    // strCompanyNum: 4247488,
-    // lastDate: "2019年12月23日16:41:05",
-    // state: 0,
-    // label: 0,
-    // CallLine: 123,
-}
-var SOSclear = false
-
-
-var SOSnewGis1 = {
-    strLongitude: "  106.565",
-    strLatitude: "29.565",
-    strNum: "735106",
-    strName: "张三",
-    strPosition: "所长",
-    strMobileNum: "18111184268",
-    strHomeNum: 4247488,
-    strCompanyNum: 4247488,
-    lastDate: "2019年12月23日16:41:05",
-    state: 0,
-    label: 0,
-    CallLine: 123,
-}
-
-var SOSoldGis1 = {
-    strLongitude: "  106.552",
-    strLatitude: "29.554666",
-    strNum: "735106",
-    strName: "张三",
-    strPosition: "所长",
-    strMobileNum: "18111184268",
-    strHomeNum: 4247488,
-    strCompanyNum: 4247488,
-    lastDate: "2019年12月23日16:41:05",
-    state: 0,
-    label: 0,
-    CallLine: 123,
-}
-
-//SOS描点新
-$(".NEWSOS").click(function () {
-    Api_SosTracePoint(SOSnewGis, SOSoldGis, SOSclear) //SOS瞄点测试
-})
-//SOS描点新
-$(".NEWSOS1").click(function () {
-    Api_SosTracePoint(SOSnewGis1, SOSoldGis1, SOSclear) //SOS瞄点测试
-})
-
-/**
- *  TODO  SOS newSOS描点
- */
-function Api_SosTracePoint(newGis, oldGis, clear) {
-    if (clear) {
-        var allOverlay = map.getOverlays();
-        for (var i = 0; i < allOverlay.length; i++) {
-            //删除指定经度的点
-            if (allOverlay[i].getPosition() != null) {
-                if (allOverlay[i].getPosition().lng == oldGis.strLongitude) {
-                    map.removeOverlay(allOverlay[i]);
-                    return false;
-                }
-            }
-        }
-    } else {
-        if (oldGis) { //判断旧的值是否为空
-            let promise = new Promise(function (resolve, reject) {
-                var allOverlay = map.getOverlays(oldGis);
-                for (let i = 0; i < allOverlay.length; i++) {
-                    if (allOverlay[i].getPosition() != null) {
-                        if (allOverlay[i].getPosition().lng == oldGis.strLongitude) {
-                            map.removeOverlay(allOverlay[i]); //清除当前的sos点
-                            map.closeInfoWindow(); //关闭信息窗口
-                            // return false;
-                            resolve
-                        }
-                    }
-                }
-            })
-            promise.then(() => {
-                var myIcon = new BMap.Icon("image/SOS.png", new BMap.Size(50, 50));
-                var point = new BMap.Point(newGis.strLongitude, newGis.strLatitude);
-                var sosmarker = new BMap.Marker(point, {
-                    icon: myIcon
-                }); // 创建起点标注
-                // newGis.behavior='SOS'
-                // console.log(newGis)
-                var label = new BMap.Label('SOS' + newGis.strNum, {
-                    offset: new BMap.Size(20, -10)
-                }); //新建声明label对象
-                label.setStyle({
-                    display: "none"
-                })
-                sosmarker.setLabel(label);
-                map.centerAndZoom(point, 16);
-                map.addOverlay(sosmarker); // 将标注添加到地图中
-                SOSInfoWindow(newGis, sosmarker, point)
-                // SOS弹窗信息
-                function SOSInfoWindow(newGis, sosmarker, point) {
-                    newGis.behavior = "'" + 'SOS' + "'"
-                    let opts = {
-                        width: 120, // 信息窗口宽度
-                        height: 100, // 信息窗口高度
-                    }
-                    var name = "'" + newGis.strName + "'";
-                    var html = [];
-                    html.push("<ul>");
-                    html.push('<li class="content">');
-                    html.push('<div class="content_left" style="width:100%;display: block"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all;width:100%"">报警时间:</h1> <h2 style="vertical-align:top;width:100%"">' + newGis.lastDate + ' </h2></div>');
-                    html.push('</li>');
-                    html.push('<li class="content_support">');
-                    html.push('<button class="zy" onclick="support(' + newGis.strNum + ',' + newGis.CallLine + ',' + name + ',' + newGis.strLongitude + ',' + newGis.strLatitude + ',' + newGis.behavior + ')">一键支援</button>');
-                    html.push('<button class="jcjb"  onclick="Api_SosRelieve(' + newGis.strLongitude + ',' + newGis.strLatitude + ',' + name + ',' + newGis.strNum + ',' + newGis.behavior + ')">解除警报</button>');
-                    html.push('</li>');
-                    html.push("</ul>");
-                    var infoWindow = new BMap.InfoWindow(html.join(""), opts); // 创建信息窗口对象
-                    sosmarker.addEventListener("click", function () {
-                        map.openInfoWindow(infoWindow, point); //开启信息窗口
-                    });
-                    sosmarker.setAnimation(BMAP_ANIMATION_BOUNCE); //让标点跳动的动画
-                    // 5秒后取消跳动
-                    setTimeout(() => {
-                        sosmarker.setAnimation()
-                    }, 5000);
-                    map.openInfoWindow(infoWindow, point)
-                }
-            })
-
-        }
-        setTimeout(() => {
-            var myIcon = new BMap.Icon("image/SOS.png", new BMap.Size(50, 50));
-            var point = new BMap.Point(newGis.strLongitude, newGis.strLatitude);
-            var sosmarker = new BMap.Marker(point, {
-                icon: myIcon
-            }); // 创建起点标注
-            // newGis.behavior='SOS'
-            // console.log(newGis)
-            var label = new BMap.Label('SOS' + newGis.strNum, {
-                offset: new BMap.Size(20, -10)
-            }); //新建声明label对象
-            label.setStyle({
-                display: "none"
-            })
-            sosmarker.setLabel(label);
-            map.centerAndZoom(point, 16);
-            map.addOverlay(sosmarker); // 将标注添加到地图中
-            SOSInfoWindow(newGis, sosmarker, point)
-            // SOS弹窗信息
-            function SOSInfoWindow(newGis, sosmarker, point) {
-                newGis.behavior = "'" + 'SOS' + "'"
-                let opts = {
-                    width: 120, // 信息窗口宽度
-                    height: 100, // 信息窗口高度
-                }
-                var name = "'" + newGis.strName + "'";
-                var html = [];
-                html.push("<ul>");
-                html.push('<li class="content">');
-                html.push('<div class="content_left" style="width:100%;display: block"> <h1 style="vertical-align:top;white-space:nowrap;word-break:keep-all;width:100%"">报警时间:</h1> <h2 style="vertical-align:top;width:100%"">' + newGis.lastDate + ' </h2></div>');
-                html.push('</li>');
-                html.push('<li class="content_support">');
-                html.push('<button class="zy" onclick="support(' + newGis.strNum + ',' + newGis.CallLine + ',' + name + ',' + newGis.strLongitude + ',' + newGis.strLatitude + ',' + newGis.behavior + ')">一键支援</button>');
-                html.push('<button class="jcjb"  onclick="Api_SosRelieve(' + newGis.strLongitude + ',' + newGis.strLatitude + ',' + name + ',' + newGis.strNum + ',' + newGis.behavior + ')">解除警报</button>');
-                html.push('</li>');
-                html.push("</ul>");
-                var infoWindow = new BMap.InfoWindow(html.join(""), opts); // 创建信息窗口对象
-                sosmarker.addEventListener("click", function () {
-                    map.openInfoWindow(infoWindow, point); //开启信息窗口
-                });
-                sosmarker.setAnimation(BMAP_ANIMATION_BOUNCE); //让标点跳动的动画
-                // 5秒后取消跳动
-                setTimeout(() => {
-                    sosmarker.setAnimation()
-                }, 5000);
-                map.openInfoWindow(infoWindow, point)
-            }
-        }, 50);
-    }
-}
-// TODO 一键支援
-var support = function (strNum, CallLine, strName, lng, lat, e) {
-    Api_SosRelieve(e + strNum)
-    var mPoint = new BMap.Point(lng, lat);
-    let circle = new BMap.Circle(mPoint, 3000, {
-        strokeColor: "red",
-        fillColor: "",
-        strokeStyle: "solid",
-        fillOpacity: 0,
-        strokeWeight: 5,
-        fillOpacity: 0,
-        strokeOpacity: 0,
-        enableEditing: false
-    });
-    map.addOverlay(circle); //圆形添加到地图中
-    let arrlist = []; //获取到的所有点对象
-    let newobj = { //获取到的label和经纬度
-        pint: [],
-        label: []
-    }
-    let allOverlay = map.getOverlays();
-    for (let i = 0; i < allOverlay.length - 1; i++) {
-        if (allOverlay[i] instanceof BMap.Marker) {
-            if (allOverlay[i].getLabel()) {
-                arrlist.push(allOverlay[i].getPosition())
-                newobj.pint.push(allOverlay[i].getPosition())
-                newobj.label.push(allOverlay[i].getLabel().content)
-            }
-        }
-    }
-    strNum = strNum + ""
-    let paramPhoneNums = [strNum];
-    /**
-     * @param e.overlay 当前绘制圆形对象
-     * */
-    // 需要一个整体数据来进行计算
-    arrlist.forEach(function (value) {
-        let bj = new BMap.Point(value.lng, value.lat)
-        if (BMapLib.GeoUtils.isPointInCircle(bj, circle)) {
-            // console.log(bj)                 //圈选中的点坐标
-            var index = (newobj.pint || []).findIndex((item) => item.lat === bj.lat)
-            if (index != undefined) {
-                paramPhoneNums.push(newobj.label[index])
-            }
-        }
-    });
-    if (paramPhoneNums.length == 1) {
-        layer.msg('该区域附近没有警员');
-    } else {
-        let Strarr = JSON.stringify(paramPhoneNums)
-        G5BrowserFeatures.QuanSelectOfCreatGroup(Strarr) //浏览器方法
-    }
-    setTimeout(() => {
-        // console.log(circle)
-        map.removeOverlay(circle); //画完后清除所画对象
-    }, 3000);
-}
-//  TODO清除SOS
-var Api_SosRelieve = function (strLongitude, b, c, d, e) {
-    var allOverlay = map.getOverlays();
-    for (let i = 0; i < allOverlay.length; i++) {
-        if (allOverlay[i] instanceof BMap.Marker) {
-            if (allOverlay[i].getLabel()) {
-                if (allOverlay[i].getLabel().content == e + d) {
-                    map.closeInfoWindow(); //关闭信息窗口
-                    map.removeOverlay(allOverlay[i]); //清除当前的sos点
-                } else if (allOverlay[i].getLabel().content == strLongitude) {
-                    map.closeInfoWindow(); //关闭信息窗口
-                    map.removeOverlay(allOverlay[i]); //清除当前的sos点
-                }
-            }
-        }
-    }
-
-}
 
 // 跟踪模拟数据
 var onOff = true
@@ -1070,10 +770,24 @@ function cancelMonitor(a, b, c, d) {
         Api_MapTracking(c, false)
     }
 }
+// 跟踪
+$(".Tracks").click(function () {
+    // console.log(gis)
+    Api_MapTracking(gis, onOff)
+    // Api_RailDltcoveringstcoverings()
+
+})
+$(".load").click(() => {
+    location.reload();
+})
 
 
 
 
+
+
+
+// TODO超界描点
 // 超界描点模拟数据
 var RingPointnewGis = {
     strLongitude: " 106.553141",
@@ -1089,37 +803,31 @@ var RingPointnewGis = {
     label: 0,
     CallLine: 123,
     deptName: "王者荣耀"
-}
-var RingPointoldGis = null
-var RingPointclear = false
-var RingPointcomeIn = false
-
-
-// TODO超界描点
+};
+var RingPointoldGis = {    
+    strLongitude: " 106.553141",
+    strLatitude: "29.444555",
+    strNum: "123465789",
+    strName: "李四",
+    strPosition: "所长",
+    strMobileNum: "18111184268",
+    strHomeNum: 4247488,
+    strCompanyNum: 4247488,
+    lastDate: "2019年12月23日16:41:05",
+    state: 0,
+    label: 0,
+    CallLine: 123,
+    deptName: "王者荣耀"
+};
+var RingPointclear = false;
+var RingPointcomeIn = false;
+var RingPointcomeIntext= ""
 function Api_RailPoint(newGis, oldGis, clear, RingPointcomeIn) {
     if (clear) {
-        var allOverlay = map.getOverlays();
-        for (var i = 0; i < allOverlay.length; i++) {
-            //删除指定经度的点
-            if (allOverlay[i].getPosition() != null) {
-                if (allOverlay[i].getPosition().lng == oldGis.strLongitude) {
-                    map.removeOverlay(allOverlay[i]);
-                    return false;
-                }
-            }
-        }
+        Delete_Coordinate(oldGis.strLongitude)
     } else {
         if (oldGis) { //判断旧的值是否为空
-            var allOverlay = map.getOverlays(oldGis);
-            for (let i = 0; i < allOverlay.length - 1; i++) {
-                if (allOverlay[i].getPosition() != null) {
-                    if (allOverlay[i].getPosition().lng == oldGis.strLongitude) {
-                        map.removeOverlay(allOverlay[i]); //清除当前的sos点
-                        map.closeInfoWindow(); //关闭信息窗口
-                        return false;
-                    }
-                }
-            }
+            Delete_Coordinate(oldGis.strLongitude)
         }
         setTimeout(function () {
             var myIcon = new BMap.Icon("image/trigger.png", new BMap.Size(50, 50));
@@ -1141,13 +849,11 @@ function Api_RailPoint(newGis, oldGis, clear, RingPointcomeIn) {
                     height: 180, // 信息窗口高度
                 };
                 var html = [];
-               
                         if (RingPointcomeIn) {
                             RingPointcomeIntext = "禁入"
                         } else {
                             RingPointcomeIntext = "禁出"
                         }
-                       
                         html.push('<ul>');
                         html.push('<li class="content">');
                         html.push('<div class="content_left" style="width:100%"> <h1 style="font-weight:800;vertical-align:top;white-space:nowrap;word-break:keep-all;width:100%;font-size: 18px;"><span  style="color:red;font-weight:800">[' + RingPointcomeIntext + ']</span> ' + newGis.strName + '</h1></div>');
@@ -1177,83 +883,27 @@ function Api_RailPoint(newGis, oldGis, clear, RingPointcomeIn) {
                         });
                         sosmarker.setAnimation(BMAP_ANIMATION_BOUNCE); //让标点跳动的动画
                         map.openInfoWindow(infoWindow, point)
-               
             }
             RingPointcomeIntext = null
-
-
         }, 1000);
     }
-
 }
-
-// 绘制覆盖物（工具箱）
-
-var Api_RailDrawcoverings = function (res) {
-    Api_RailDltcoverings()
-    let arr = []
-    let str = JSON.parse(res)
-    for (let item in str) {
-        arr.push(new BMap.Point(str[item].lng, str[item].lat))
-    }
-    var dbx = new BMap.Polygon(arr, {
-        strokeColor: "red",
-        strokeWeight: 2,
-        strokeOpacity: 0.5,
-        fillColor: "", //填充颜色。当参数为空时，圆形将没有填充效果。  
-    }); //创建多边形
-    var x = 0;
-    var y = 0;
-    for (var k = 0; k < str.length; k++) {
-        x = x + parseFloat(str[k].lng);
-        y = y + parseFloat(str[k].lat);
-    }
-    x = x / arr.length;
-    y = y / arr.length;
-    let dw = new BMap.Point(x, y);
-    let el = map.getZoom() //获取到当前界面缩放等级
-    map.centerAndZoom(dw, el);
-    map.addOverlay(dbx); //添加覆盖物  
-}
-
-
-// 删除覆盖物（工具箱）
-var Api_RailDltcoverings = function () {
-    var allOverlay = map.getOverlays();
-    for (let i = 0; i < allOverlay.length; i++) {
-        if (allOverlay[i].toString() == "[object Polygon]") {
-            map.removeOverlay(allOverlay[i]);
+// 根据坐标进行删除
+function Delete_Coordinate(params) {
+    const allCoordinate = map.getOverlays()
+    for (let i = 0; i < allCoordinate.length; i++) {
+        if (allCoordinate[i] instanceof BMap.Marker) {
+            if (allCoordinate[i].getPosition().lng == params) {
+                map.removeOverlay(allOverlay[i]); //清除当前的sos点
+                map.closeInfoWindow(); //关闭信息窗口
+                return false;
+            }
         }
-
     }
-
 }
-
-
-
-
-
-
-
-
-
-// 跟踪
-$(".Tracks").click(function () {
-    // console.log(gis)
-    Api_MapTracking(gis, onOff)
-    // Api_RailDltcoveringstcoverings()
-
-})
-
-
 $(".RingPoint").click(function () {
-    Api_RailPoint(RingPointnewGis, RingPointoldGis, RingPointclear, RingPointcomeIn)
-
-})
-$(".load").click(() => {
-    location.reload();
-
-})
+    Api_RailPoint(RingPointnewGis, RingPointoldGis, RingPointclear, RingPointcomeIn);
+});
 
 
 
@@ -1261,57 +911,6 @@ $(".load").click(() => {
 
 
 
-// TODO圈选功能绘制
-
-function draw(type) {
-    myDrawingManagerObject.open();
-    myDrawingManagerObject.setDrawingMode(type);
-}
-//添加鼠标绘制工具监听事件，用于获取绘制结果
-myDrawingManagerObject.addEventListener('overlaycomplete', overlaycomplete);
-
-function overlaycomplete(e) {
-    myDrawingManagerObject.close(); //关闭画图
-    var drawingModeType = e.drawingMode; //获取所画图形类型
-    // console.log(e)
-    var arrlist = []; //获取到的所有点对象
-    var newobj = { //获取到的label和经纬度
-        pint: [],
-        label: []
-    }
-    var allOverlay = map.getOverlays();
-    for (var i = 0; i < allOverlay.length - 1; i++) {
-        if (allOverlay[i] instanceof BMap.Marker) {
-            if (allOverlay[i].getLabel()) {
-                arrlist.push(allOverlay[i].getPosition())
-                newobj.pint.push(allOverlay[i].getPosition())
-                newobj.label.push(allOverlay[i].getLabel().content)
-            }
-        }
-    }
-
-    let paramPhoneNums = [];
-    /**
-     * @param e.overlay 当前绘制圆形对象
-     * */
-    // 需要一个整体数据
-    arrlist.forEach(function (value) {
-        let bj = new BMap.Point(value.lng, value.lat)
-        if (drawingModeType == "circle") {
-            if (BMapLib.GeoUtils.isPointInCircle(bj, e.overlay)) {
-                // console.log(e.overlay)
-                // console.log(bj)                 //圈选中的点坐标
-                var index = (newobj.pint || []).findIndex((item) => item.lat === bj.lat)
-                if (index != undefined) {
-                    paramPhoneNums.push(newobj.label[index])
-                }
-            }
-        }
-    });
-    let Strarr = JSON.stringify(paramPhoneNums)
-    G5BrowserFeatures.QuanSelectOfCreatGroup(Strarr)
-    map.removeOverlay(e.overlay); //画完后清除所画对象
-}
 
 
 
