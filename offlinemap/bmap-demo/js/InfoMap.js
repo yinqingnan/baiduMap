@@ -1,4 +1,5 @@
 const map = new BMap.Map("allmap");
+
 if (typeof map != 'undefined') {
     map.addEventListener("zoomend", function (e) {
         layer.msg('地图级别: ' + map.getZoom() + (map.getZoom() > 14 ? ', 示例中只有15级地图,超过的无法显示!' : ''), {
@@ -7,8 +8,8 @@ if (typeof map != 'undefined') {
     });
 }
 
-var strLongitude = "";
-var strLatitude = "";
+// var strLongitude = "";
+// var strLatitude = "";
 // var CityName="XXX";
 // // 百度地图API功能
 // // 定义默认的精度，维度
@@ -26,7 +27,7 @@ var strLongitude = "";
 var strLatitude = "";
 var CityName = "";
 var point = new BMap.Point(strLongitude, strLatitude);
-map.centerAndZoom(point, 13); //初始化地图位置和地图放大等级
+map.centerAndZoom(point, 12); //初始化地图位置和地图放大等级
 G5BrowserFeatures.GetSystemGis().then(res => {
     if (res != "" && res != null && res != undefined) {
         let obj = JSON.parse(res);
@@ -34,7 +35,7 @@ G5BrowserFeatures.GetSystemGis().then(res => {
         strLatitude = obj.y
         strCityName = obj.CityName
         var point = new BMap.Point(strLongitude, strLatitude);
-        map.centerAndZoom(point, 13); //地图位置和地图放大等级
+        map.centerAndZoom(point, 12); //地图位置和地图放大等级
         $(".Location")[0].innerHTML = strCityName;
         $(".Location")[1].innerHTML = strCityName;
     } else {
@@ -42,9 +43,9 @@ G5BrowserFeatures.GetSystemGis().then(res => {
         strLatitude = 39.913828;
         CityName = "北京市";
         var point = new BMap.Point(strLongitude, strLatitude);
-        map.centerAndZoom(point, 13); //地图位置和地图放大等级
-        $(".Location")[0].innerHTML = strCityName;
-        $(".Location")[1].innerHTML = strCityName;
+        map.centerAndZoom(point, 12); //地图位置和地图放大等级
+        $(".Location")[0].innerHTML = CityName;
+        $(".Location")[1].innerHTML = CityName;
     }
 });
 
@@ -58,7 +59,7 @@ $($(".Location")[1]).click(function () {
 
 // 添加比例尺、缩放、平移工具条
 map.enableScrollWheelZoom(); //启动鼠标滚轮缩放地图
-// map.addControl(new BMap.MapTypeControl());          //添加地图类型控件
+map.addControl(new BMap.MapTypeControl());          //添加地图类型控件
 var top_left_control = new BMap.ScaleControl({
     anchor: BMAP_ANCHOR_BOTTOM_RIGHT
 }); // 左上角，添加比例尺
@@ -334,3 +335,11 @@ var Api_RailDltcoverings = function () {
         }
     }
 };
+
+
+
+
+
+
+
+

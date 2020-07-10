@@ -20,8 +20,12 @@ var myDrawingManagerObject = new BMapLib.DrawingManager(map, {
 });
 
 function draw(type) {
-    myDrawingManagerObject.open();
-    myDrawingManagerObject.setDrawingMode(type);
+    if(state){
+        myDrawingManagerObject.open();
+        myDrawingManagerObject.setDrawingMode(type);
+    }else{
+        layer.alert('请先结束绘制', {title: '提示'})
+    }
 }
 //添加鼠标绘制工具监听事件，用于获取绘制结果
 myDrawingManagerObject.addEventListener('overlaycomplete', overlaycomplete);

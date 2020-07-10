@@ -547,6 +547,8 @@ var Api_MapTracking = function (gis, onOff) {
                         html.push('<button class="Monitor" onclick="Monitor(' + gis.strLongitude + ',' + gis.strLatitude + ',' + gis.strNum + ',\'' + gis.strName + '\')">监控</button>');
                         html.push('<button class="cancelMonitor" style="width: 18%" onclick="cancelMonitor(' + gis.strLongitude + ',' + gis.strLatitude + ',' + gis.strNum + ',\'' + gis.strName + '\')">取消跟踪</button>');
                         html.push('<button class="Information" onclick="Information(' + gis.strLongitude + ',' + gis.strLatitude + ',' + gis.strNum + ',\'' + gis.strName + '\')">监听</button>');
+                        html.push('<button class="Information" onclick="Notice(' + gis.strLongitude + ',' + gis.strLatitude + ',' + gis.strNum + ',\'' + gis.strName + '\')">公告</button>');
+
                         html.push('</li>');
                         html.push('</ul>');
                         let infoWindow = new BMap.InfoWindow(html.join(""), opts); // 创建信息窗口对象

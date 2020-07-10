@@ -18,41 +18,53 @@ var myDrawpolygon = new BMapLib.DrawingManager(map, {
     polygonOptions: styleOptions, //多边形的样式
     rectangleOptions: styleOptions //矩形的样式
 });
-
+var Polygon
+var PolygonPoint
+var state = true
 function DrawPOLYGON(type,num) {
-    myDrawpolygon.open();
-    myDrawpolygon.setDrawingMode(type);
-    if(num=='Enclosure'){            //todo   电子围栏绘制
-        myDrawpolygon.addEventListener('overlaycomplete', overlaycomplete);
-        function overlaycomplete(e) {
-            myDrawpolygon.close();                      //关闭画图
-            let Polygon=e.overlay                     //多边形覆盖物本身
-            let PolygonPoint = e.overlay.getPath()    //多边形坐标点集合
-            setTimeout(() => {
-            map.removeOverlay(Polygon); //画完后清除所画对象
-            }, 1000);
-            let Str = JSON.stringify(PolygonPoint)
-            G5BrowserFeatures.CreateElectricfence(Str)
-            myDrawpolygon.removeEventListener('overlaycomplete', overlaycomplete)
-        }
-    }else if(num=='Tool'){      //todo   工具栏绘制
-        //添加鼠标绘制工具监听事件，用于获取绘制结果
-        myDrawpolygon.addEventListener('overlaycomplete', overlaycomplete);
-        function overlaycomplete(e) {
-            myDrawpolygon.close(); //关闭画图
-            let Polygon=e.overlay //多边形覆盖物本身
-            let PolygonPoint = e.overlay.getPath()    //多边形坐标点集合
-            setTimeout(() => {
-            map.removeOverlay(Polygon); //画完后清除所画对象
-            }, 1000);
-            let Str = JSON.stringify(PolygonPoint)
-            // 双击完成绘制后弹出框Save_area
-            G5BrowserFeatures.CreateGisArea(Str, map.getZoom());
-            myDrawpolygon.removeEventListener('overlaycomplete', overlaycomplete)
+    if(state){
+        state = false
+        myDrawpolygon.close();
+        myDrawpolygon.open();
+        myDrawpolygon.setDrawingMode(type);
 
-        }
 
+        if(num=='Enclosure'){            //todo   电子围栏绘制
+            myDrawpolygon.addEventListener('overlaycomplete', overlaycomplete);
+            function overlaycomplete(e) {
+                myDrawpolygon.close();                      //关闭画图
+                Polygon=e.overlay                     //多边形覆盖物本身
+                PolygonPoint = e.overlay.getPath()    //多边形坐标点集合
+                setTimeout(() => {
+                    map.removeOverlay(Polygon); //画完后清除所画对象
+                    state = true
+                }, 1000);
+                let Str = JSON.stringify(PolygonPoint)
+                G5BrowserFeatures.CreateElectricfence(Str)
+                myDrawpolygon.removeEventListener('overlaycomplete', overlaycomplete)
+            }
+            
+        }else if(num=='Tool'){      //todo   工具栏绘制
+            //添加鼠标绘制工具监听事件，用于获取绘制结果
+            myDrawpolygon.addEventListener('overlaycomplete', overlaycomplete);
+            function overlaycomplete(e) {
+                myDrawpolygon.close(); //关闭画图
+                let Polygon=e.overlay //多边形覆盖物本身
+                let PolygonPoint = e.overlay.getPath()    //多边形坐标点集合
+                setTimeout(() => {
+                    map.removeOverlay(Polygon); //画完后清除所画对象
+                    state = true
+                }, 1000);
+                let Str = JSON.stringify(PolygonPoint)
+                // 双击完成绘制后弹出框Save_area
+                G5BrowserFeatures.CreateGisArea(Str, map.getZoom());
+                myDrawpolygon.removeEventListener('overlaycomplete', overlaycomplete)
+            }
+        }
+    }else{
+        layer.alert('请先结束绘制', {title: '提示'})
     }
+
 }
 
- 
+

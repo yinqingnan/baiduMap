@@ -102,7 +102,7 @@
     <ul>
         <li onclick="DrawPOLYGON(BMAP_DRAWING_POLYGON,'Tool')">绘制区域</li>
         <li onclick="ShowGisAreaMgtList()">区域管理</li>
-        <li onclick="myDis.open()">测距</li>
+        <li onclick="ceju()">测距</li>
     </ul>
 </div>
 <!-- 保存区域信息弹窗 -->
@@ -151,7 +151,14 @@
 <!--加载鼠标测距-->
 <script type="text/javascript" src="baiduMapAPI/DistanceTool_min.js"></script>
 <script>
-    var myDis = new BMapLib.DistanceTool(map);    //  鼠标测距功能
+    const myDis = new BMapLib.DistanceTool(map); //  申明鼠标测距功能
+    var ceju = function () {
+        if(state){
+            myDis.open()
+        }else{
+            layer.alert('请先结束绘制', {title: '提示'})
+        }
+    }
 </script>
 <!--用于电子围栏越界判断实例-->
 <script type="text/javascript" src="js/geoAction.js"></script>
